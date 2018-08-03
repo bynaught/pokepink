@@ -1,6 +1,6 @@
-# Pokémon Red and Blue
+# Pokémon Pink
 
-This is a disassembly of Pokémon Red and Blue.
+This is a work in progress adaptation of Pokémon Red/Blue that aims to make Ditto much more interesting. I plan to rebalance some of the game, add QOL changes, and make Ditto a starter Pokémon similar to how Pikachu is implemented in Pokémon Yellow.
 
 It builds the following roms:
 
@@ -9,8 +9,9 @@ It builds the following roms:
 
 To set up the repository, see [**INSTALL.md**](INSTALL.md).
 
+Thanks to the romhacking community and the pokered disassembly that makes this possible.
 
-## See also
+## Other resources by pret
 
 * Disassembly of [**Pokémon Yellow**][pokeyellow]
 * Disassembly of [**Pokémon Gold**][pokegold]
