@@ -208,19 +208,27 @@ GainExperience:
 	cp b ; is the current mon in battle?
 	jr nz, .printGrewLevelText
 ; current mon is in battle
-	ld de, wBattleMonHP
-; copy party mon HP to battle mon HP
-	ld a, [hli]
-	ld [de], a
-	inc de
-	ld a, [hl]
-	ld [de], a
-; copy other stats from party mon to battle mon
+	;ld de, wBattleMonHP
+; copy party mon HP to battle mon HP - REMOVED 
+	;ld a, [hli]
+	;ld [de], a
+	;inc de
+	;ld a, [hl]
+	;ld [de], a
+; copy other stats from party mon to battle mon - check if this needs changing again
+	inc hl ; add this because we skipped the increment before
 	ld bc, wPartyMon1Level - (wPartyMon1HP + 1)
 	add hl, bc
 	push hl
 	ld de, wBattleMonLevel
-	ld bc, 1 + NUM_STATS * 2 ; size of stats
+	ld a, [hli] ; 
+	ld [de], a ; manually copy party mon level to battle mon level
+	inc de 
+	inc de 
+	inc de
+	inc hl 
+	inc hl ; hl and de now points to party mon and battle mon attack respectively
+	ld bc, 8 ; Attack, Defence, Special, Speed * 2 bytes each
 	call CopyData
 	pop hl
 	ld a, [wPlayerBattleStatus3]
