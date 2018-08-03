@@ -261,6 +261,7 @@ endm
 	spritestatedata1 Sprite13
 	spritestatedata1 Sprite14
 	spritestatedata1 Sprite15
+	; in yellow, pikachu replaces sprite 15
 	; ds $10 * $10
 
 
@@ -319,6 +320,7 @@ endm
 	spritestatedata2 Sprite13
 	spritestatedata2 Sprite14
 	spritestatedata2 Sprite15
+	; in yellow, pikachu replaces sprite 15
 	; ds $10 * $10
 
 wSpriteDataEnd::
@@ -839,10 +841,12 @@ wSimulatedJoypadStatesIndex:: ; cd38
 wWastedByteCD39:: ; cd39
 ; written to but nothing ever reads it
 	ds 1
+	;unused
 
 wWastedByteCD3A:: ; cd3a
 ; written to but nothing ever reads it
 	ds 1
+	;unused
 
 wOverrideSimulatedJoypadStatesMask:: ; cd3b
 ; mask indicating which real button presses can override simulated ones
@@ -1252,7 +1256,7 @@ wNormalMaxPPList:: ; cd78
 ; list of normal max PP (without PP up) values
 	ds 9
 
-NEXTU
+NEXTU ; what is this? 
 
 wEvosMoves:: ds MAX_EVOLUTIONS * EVOLUTION_SIZE + 1
 .end::
@@ -1397,6 +1401,9 @@ wScriptedNPCWalkCounter:: ; cf18
 wGBC:: ; cf1a
 	ds 1
 
+	; HERE!! here it is!! from this point on, RB addresses are 1 higher than Y,
+	; because Y does not have this GBC byte, only the SGB one.
+
 wOnSGB:: ; cf1b
 ; if running on SGB, it's 1, else it's 0
 	ds 1
@@ -1434,6 +1441,7 @@ wPalPacket:: ; cf2d
 wPartyMenuBlkPacket:: ; cf2e
 ; $30 bytes
 	ds 29
+
 
 wExpAmountGained:: ; cf4b
 ; 2-byte big-endian number
@@ -2557,7 +2565,99 @@ wDestinationWarpID:: ; d42f
 ; if $ff, the player's coordinates are not updated when entering the map
 	ds 1
 
+wUnusedD430::
+	; 128 seemingly unused bytes. in yellow, these are allocated as follows:
 	ds 128
+
+; wPikachuOverworldStateFlags:: ds 1 ; d42f
+; wPikachuSpawnState:: ds 1 ; d430
+; wd432:: ds 1 ; d431
+; wd433:: ds 1 ; d432
+; wd434:: ds 1 ; d433
+; wd435:: ds 1 ; d434
+; wd436:: ds 1 ; d435
+; wPikachuFollowCommandBufferSize:: ds 1 ; d436
+; wPikachuFollowCommandBuffer:: ds 16 ; d437
+
+; wExpressionNumber:: ; d447
+; 	ds 1
+; wPikaPicAnimNumber:: ; d448
+; 	ds 1
+	
+; wPikachuMovementScriptBank:: ds 1  ; d449
+; wPikachuMovementScriptAddress:: dw ; d44a
+; wPikachuMovementFlags:: ; d44c
+; ; bit 6 - spawn shadow
+; ; bit 7 - signal end of command
+; 	ds 1
+
+; wCurPikaMovementData:: ; d44d
+; wCurPikaMovementParam1:: ds 1 ; d44d
+; wCurPikaMovementFunc1:: ds 1 ; d44e
+; wCurPikaMovementParam2:: ds 1 ; d44f
+; wCurPikaMovementFunc2:: ds 1 ; d450
+; wd451:: ds 1 ; d451
+; wCurPikaMovementSpriteImageIdx:: ds 1 ; d452
+; wPikaSpriteX:: ds 1 ; d453
+; wPikaSpriteY:: ds 1 ; d454
+; wPikachuMovementXOffset:: ds 1 ; d455
+; wPikachuMovementYOffset:: ds 1 ; d456
+; wPikachuStepTimer:: ds 1 ; d457
+; wPikachuStepSubtimer:: ds 1 ; d458
+; 	ds 5
+; wCurPikaMovementDataEnd:: ; d45e
+; 	ds wCurPikaMovementData - @
+
+
+; wPikaPicAnimPointer:: dw ; d44d
+; wPikaPicAnimPointerSetupFinished:: ds 1 ; d44f
+; wPikaPicAnimCurGraphicID:: ds 1 ; d450
+; wPikaPicAnimTimer:: ds 2 ; d451
+; wPikaPicAnimDelay:: ds 1 ; d453
+; wPikaPicPikaDrawStartX:: ds 1 ; d454
+; wPikaPicPikaDrawStartY:: ds 1 ; d455
+
+; wCurPikaPicAnimObject:: ; d456
+; wCurPikaPicAnimObjectVTileOffset:: db ; d456
+; wCurPikaPicAnimObjectXOffset:: db ; d457
+; wCurPikaPicAnimObjectYOffset:: db ; d458
+; wCurPikaPicAnimObjectScriptIdx:: db ; d459
+; wCurPikaPicAnimObjectFrameIdx:: db ; d45a
+; wCurPikaPicAnimObjectFrameTimer:: db ; d45b
+; 	ds 1
+; wCurPikaPicAnimObjectEnd:: ; d45d
+
+; 	ds 18
+
+; wPikachuHappiness:: ds 1 ; d46f
+; wPikachuMood:: ds 1 ; d470
+; wd472:: ds 1 ; d471
+; wd473:: ds 1 ; d472
+
+; 	ds 1
+
+; wd475:: ds 1 ; d474
+
+; 	ds 4
+
+; wd47a:: ds 1 ; d479
+
+; 	ds 24
+	
+; wd492:: ds 1 ; d492
+	
+; 	ds 1
+	
+; wSurfingMinigameHiScore:: ds 2 ; 4-digit BCD little-endian
+; 	ds 1
+
+; wPrinterSettings:: ds 1
+; wUnknownSerialFlag_d499:: ds 1 ; d498
+; wPrinterConnectionOpen:: ds 1 ; d499
+; wPrinterOpcode:: ds 1 ; d49a
+; wd49c:: ds 1 ; d49b
+
+; 	ds 19
 
 wNumSigns:: ; d4b0
 ; number of signs in the current map (up to 16)
