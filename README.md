@@ -1,6 +1,6 @@
 # Pokémon Pink
 
-This is a work in progress adaptation of Pokémon Red/Blue that aims to make Ditto much more interesting. I plan to rebalance some of the game, add QOL changes, and make Ditto a starter Pokémon similar to how Pikachu is implemented in Pokémon Yellow.
+This is a work in progress adaptation of Pokémon Red/Blue that aims to make Ditto much more interesting. It is based on the pokered disassembly by pret. I plan to rebalance some of the game, add QOL changes, and make Ditto a starter Pokémon.
 
 It builds the following roms:
 
@@ -11,7 +11,7 @@ To set up the repository, see [**INSTALL.md**](INSTALL.md).
 
 Thanks to the romhacking community and the pokered disassembly that makes this possible.
 
-## Other resources by pret
+## Other resources from pret, owners of the original pokered repository
 
 * Disassembly of [**Pokémon Yellow**][pokeyellow]
 * Disassembly of [**Pokémon Gold**][pokegold]
