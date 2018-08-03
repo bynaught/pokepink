@@ -13,8 +13,8 @@ dw MetapodPicFront
 dw MetapodPicBack
 ; attacks known at lvl 0
 db HARDEN
-db 0
-db 0
+db TACKLE
+db STRING_SHOT
 db 0
 db 0 ; growth rate
 ; learnset

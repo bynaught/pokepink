@@ -2282,7 +2282,11 @@ wPseudoItemID:: ; d152
 wUnusedD153:: ; d153
 	ds 1
 
-	ds 2
+wUnusedD154::
+	ds 1
+
+wUnusedD155::
+	ds 1
 
 wEvoStoneItemID:: ; d156
 	ds 1
@@ -2893,12 +2897,24 @@ wRoute18GateCurScript:: ; d669
 	ds 78
 wGameProgressFlagsEnd::
 
-	ds 56
+wTransformMoveList:: 
+	ds 1
+wTransformMoves:: 
+	ds 14
+	ds 1
 
-wObtainedHiddenItemsFlags::
+wDittoTMS::   
+	ds 7
+
+wPCHPStore::
+	ds 1
+
+	ds 32 
+
+wObtainedHiddenItemsFlags:: 
 	ds 14
 
-wObtainedHiddenCoinsFlags::
+wObtainedHiddenCoinsFlags:: 
 	ds 2
 
 wWalkBikeSurfState:: ; d700
@@ -2969,9 +2985,7 @@ wWhichDungeonWarp:: ; d71e
 	ds 1
 
 wUnusedD71F:: ; d71f
-	ds 1
-
-	ds 8
+	ds 9
 
 wd728:: ; d728
 ; bit 0: using Strength outside of battle

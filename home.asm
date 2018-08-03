@@ -1493,6 +1493,9 @@ DisplayListMenuIDLoop::
 	ld a, [hl]
 	ld [wcf91], a
 	ld a, [wListMenuID]
+	cp MOVESLISTMENU
+	jr z, .storeChosenEntry
+	ld a, [wListMenuID]
 	and a ; is it a PC pokemon list?
 	jr z, .pokemonList
 	push hl

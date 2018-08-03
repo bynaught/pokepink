@@ -388,6 +388,7 @@ MainInBattleLoop:
 	res FLINCHED, [hl] ; reset flinch bit
 	ld hl, wPlayerBattleStatus1
 	res FLINCHED, [hl] ; reset flinch bit
+	res INVULNERABLE, [hl] ; can i just add this here????
 	ld a, [hl]
 	and (1 << THRASHING_ABOUT) | (1 << CHARGING_UP) ; check if the player is thrashing about or charging for an attack
 	jr nz, .selectEnemyMove ; if so, jump
@@ -458,6 +459,8 @@ MainInBattleLoop:
 	callab SwitchEnemyMon
 .noLinkBattle
 	ld a, [wPlayerSelectedMove]
+	cp TRANSFORM ; transform has ultimate priority, this combined with invuln bit is a hacky way of implementing imposter
+	jp z, .playerMovesFirst
 	cp QUICK_ATTACK
 	jr nz, .playerDidNotUseQuickAttack
 	ld a, [wEnemySelectedMove]
@@ -3197,7 +3200,7 @@ PlayerCalcMoveDamage:
 	ld de, 1
 	call IsInArray
 	jp c, .moveHitTest ; SetDamageEffects moves (e.g. Seismic Toss and Super Fang) skip damage calculation
-	call CriticalHitTest
+	;call CriticalHitTest
 	call HandleCounterMove
 	jr z, handleIfPlayerMoveMissed
 	call GetDamageVarsForPlayerAttack
@@ -5738,7 +5741,7 @@ EnemyCalcMoveDamage:
 	ld de, $1
 	call IsInArray
 	jp c, EnemyMoveHitTest
-	call CriticalHitTest
+	;call CriticalHitTest
 	call HandleCounterMove
 	jr z, handleIfEnemyMoveMissed
 	call SwapPlayerAndEnemyLevels
@@ -6343,6 +6346,15 @@ LoadEnemyMonData:
 	ld b, FLAG_SET
 	ld hl, wPokedexSeen
 	predef FlagActionPredef ; mark this mon as seen in the pokedex
+	ld a, [wEnemyMonSpecies2]
+	ld [wd11e], a
+	predef IndexToPokedex
+	ld a, [wd11e]
+	dec a
+	ld c, a
+	ld b, FLAG_SET
+	predef FlagActionPredef ; mark this mon as owned???
+
 	ld hl, wEnemyMonLevel
 	ld de, wEnemyMonUnmodifiedLevel
 	ld bc, 1 + NUM_STATS * 2

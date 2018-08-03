@@ -13,8 +13,8 @@ dw KakunaPicFront
 dw KakunaPicBack
 ; attacks known at lvl 0
 db HARDEN
-db 0
-db 0
+db POISON_STING
+db STRING_SHOT
 db 0
 db 0 ; growth rate
 ; learnset

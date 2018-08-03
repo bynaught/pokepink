@@ -3191,6 +3191,11 @@ _UsedCutText::
 	line "away with CUT!"
 	prompt
 
+_DupeMoveText::
+	text "You already"
+	line "chose that one!"
+	prompt
+
 
 SECTION "Pokedex Text", ROMX, BANK[POKEDEX_TEXT]
 
