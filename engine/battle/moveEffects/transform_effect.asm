@@ -18,7 +18,8 @@ TransformEffect_:
 	push de
 	push bc
 	ld hl, wPlayerBattleStatus1
-	set INVULNERABLE, [hl] 		; make ditto invulerable during transform. only do this when you have figured out a special way to add moves to your knowledge
+	set INVULNERABLE, [hl] 		; make ditto invulerable during transform as a pretend "imposter" ability
+								; TODO: make this check to see if Ditto is already transformed, and only set INVULNERABLE if it's the first time? might make the move too weak but I'll see
 	ld hl, wPlayerBattleStatus2
 	ld a, [H_WHOSETURN]
 	and a
@@ -61,10 +62,10 @@ TransformEffect_:
 	inc de
 	inc de
 	inc de
-	inc de ;
-	inc de ;
-	dec bc ;
-	dec bc ;comment these out for hp
+	inc de 
+	inc de 
+	dec bc 
+	dec bc 
 	call CopyData
 	inc de
 	ld bc, $3
@@ -88,31 +89,21 @@ TransformEffect_:
 	ld a, [hli]
 	ld [de], a
 	inc de
-; Attack, Defense, Speed, and Special stats AND HP?
-	inc hl;
-	inc hl; comment these for hp
+; Attack, Defense, Speed, and Special stats
 	inc hl
-	inc de; 
-	inc de; comment these for hp
+	inc hl
+	inc hl
 	inc de
-	ld bc, $8 ; $0a for HP copy
+	inc de
+	inc de
+	ld bc, $8
 	call CopyData
-; max HP
-;	ld hl, wEnemyMonStats
-;	ld de, wBattleMonStats
-;	;inc hl
-;	;inc de
-;	ld a, [hl]
-;	ld [de], a
-;	inc hl
-;	inc de
-;	ld a, [hl]
-;	ld [de], a
 
 ; THE BELOW HP CHECKS ARE 8-BIT ONLY, WHICH MAY LEAD TO SOME UNLIKELY ISSUES WITH HIGH VALUES
 ; ADD AN EXTRA COMPARISON TO THE FIRST BYTE IF YOU AREN'T LAZY
 ; THE FIRST BYTE SHOULD NEVER BE MORE THAN 1 ANYWAY
 
+	; check if my max hp = enemy max hp, in which case no calculation required
 	ld hl, wBattleMonStats + 1
 	ld a, [hl]
 	ld hl, wEnemyMonStats + 1
@@ -120,16 +111,17 @@ TransformEffect_:
 	cp b
 	jp z, .chooseMoves
 
+	; check if we are 100% hp, in which case we just need to copy enemy max to our max, no calculation required
 	ld hl, wBattleMonHP + 1
 	ld a, [hl]
 	ld hl, wBattleMonStats + 1
 	ld b, [hl]
 	cp b
 	jp nz, .hpCalc
-	ld hl, wEnemyMonHP
+
+	; execute this if we are 100% hp - copy enemy max hp to our current hp
+	ld hl, wEnemyMonStats ; changed from hp to stats
 	ld de, wBattleMonHP
-	;inc hl
-	;inc de
 	ld a, [hl]
 	ld [de], a
 	inc hl
@@ -143,7 +135,7 @@ TransformEffect_:
 	jp .maxHP
 
 
-.hpCalc
+.hpCalc ; this is where we calculate our modified hp post-transformation
     ld hl, wBattleMonHP
 	ld a, [hli]
 	or [hl]
@@ -160,10 +152,8 @@ TransformEffect_:
 	ld hl, wBattleMonStats
 	ld a, [hli]
 	ld b, [hl]
-	srl a
-	;rr b
-	;srl a
-	rr b
+	srl a ;
+	rr b ; divide by two by shifting right
 	ld a, b
 	ld b, 4
 	ld [H_DIVISOR], a
@@ -182,10 +172,10 @@ TransformEffect_:
 	ld [H_MULTIPLIER], a ; multiply enemy maxhp by current percent
 	call Multiply
 	ld a, 10
-    ld [H_DIVISOR], a ; then divide by 100 to calculate new current HP
+    ld [H_DIVISOR], a ; then divide by 10 
     call Divide
 	ld a, 10
-    ld [H_DIVISOR], a ; then divide by 100 to calculate new current HP
+    ld [H_DIVISOR], a ; then divide by 10 again to calculate new current HP
     call Divide 	  ; we divide by ten twice to avoid high remainders, which can cause rounding issues with accuracy
     ld a, [H_QUOTIENT + 2]
     ld hl, wBattleMonHP
@@ -219,7 +209,7 @@ TransformEffect_:
 	ld h, [hl]
 	ld l, a
 .skipEvoEntriesLoop ; if there are evolutions, skip these
-	ld c, $0
+	ld c, $0 ; IMPORTANT: set c to 0. from this point on, c is our counter for how many moves are in the list
 	ld a, [hli]
 	and a
 	jr nz, .skipEvoEntriesLoop
@@ -270,8 +260,8 @@ TransformEffect_:
 
 
 
-.enemyCurrentlearnset
-    ld a, c
+.enemyCurrentlearnset    ; the following three blocks add the enemy's current moves into the list if they aren't already in it. this is for cases such as elite four and gym pokemon that know extra moves
+    ld a, c              ; TODO: make this an actual loop rather than copy+paste it a bunch of times
     ld b, a
     ld a, [hl]
     and a
@@ -285,12 +275,8 @@ TransformEffect_:
     dec b
     jr nz, .checkDoopLoop ; there are still moves left. keep looping 
     ; if we get to here, the move is a new one and will be appended
-
     ld a, [hl]
     ld [de], a
-
- 
-
     inc c
 .enemyCurrentlearnsetTWO
     inc hl
@@ -308,11 +294,8 @@ TransformEffect_:
     dec b
     jr nz, .checkDoopLoopTWO ; there are still moves left. keep looping 
     ; if we get to here, the move is a new one and will be appended
-   
-
     ld a, [hl]
     ld [de], a
-
     inc c
 .enemyCurrentlearnsetTHREE
     inc hl
@@ -330,12 +313,8 @@ TransformEffect_:
     dec b
     jr nz, .checkDoopLoopTHREE ; there are still moves left. keep looping 
     ; if we get to here, the move is a new one and will be appended
-    
     ld a, [hl]
     ld [de], a
-
-
-
     inc c
 .enemyCurrentlearnsetFOUR
     inc hl
@@ -353,22 +332,16 @@ TransformEffect_:
     dec b
     jr nz, .checkDoopLoopFOUR ; there are still moves left. keep looping 
     ; if we get to here, the move is a new one and will be appended
-   
-    
     ld a, [hl]
     ld [de], a
-
-
     inc hl
     inc c
 	inc de
-
 
 .finalMoveCount
 	ld de, wTransformMoveList + 1
     ld a, [de]
     jr nz, .finalMoveCount ; ; make sure we're at the end of the movelist
-    
     ld a, c
 	;and a
 	;jp z, .copymovePP
@@ -376,26 +349,21 @@ TransformEffect_:
 	jp c, .collectMoves ; if movelist is less than 4, we already have all of them so skip the menu
 	dec c
 	ld a, c
-
-
 	ld [wTransformMoveList], a
 	ld a, $96 ; put Splash at the bottom. this stops it from glitching and i have no idea why. in the future, change the way the menu draws to chop off the bottom
 	ld [de], a
 	jp .drawMoveMenus
-	; this is wListCount for later
-    ; and a
-	;jr z, .copyMoves ; just copy moveset - this is a failsafe for mons that don't learn any moves
 
 .collectMoves
-	ld b, 0 ;wait why is this zero? why does this work?? they're already copied in from before!!! see original functionality at the top
+	ld b, 0 ; reset b to zero, which makes bc = c (current movelist length)
 	ld hl, wTransformMoveList + 1
 	ld de, wUnusedD153
 	call CopyData ;copy our list of 2 or 3 into the temporary learning array
 	jp .fillMoves ; skip the menu because we only have 3 anyway
     
-
-.drawMoveMenus ; draw the move selection menu
-    call SaveScreenTilesToBuffer2 ; no idea what these tile things do - something about screen state
+.drawMoveMenus  ; draw the move selection menu 
+				; TODO: make all of this this an actual loop rather than copy+paste it a bunch of times
+    call SaveScreenTilesToBuffer2 ; saving screen state
 .drawMoveMenuONE
 	ld hl, wTransformMoveList
     ld a, l
@@ -443,7 +411,7 @@ TransformEffect_:
 	ld [wUnusedD155], a ; a wUnusedD153-4 check to prevent duplicates by comparing
 	call LoadScreenTilesFromBuffer1
 
-.fillMoves
+.fillMoves   ; this block copies the 3 transformed moves into ditto's moves
 	ld hl, wUnusedD153
 	ld bc, $3
 	ld de, wBattleMonMoves ;ld a, $90 ;ld [de], a
@@ -454,7 +422,7 @@ TransformEffect_:
 	ld a, $00
 	ld [hli], a
 	ld [hli], a
-	ld [hl], a
+	ld [hl], a    ; reset chosen move list bytes to zero/ not sure if necessary
 
 	ld hl, wTransformMoveList
 	ld a, $00
@@ -473,13 +441,15 @@ TransformEffect_:
 	ld [hli], a
 	ld [hli], a
 	ld [hli], a
-	ld [hl], a
+	ld [hl], a  ; all this does is reset all the move list bytes to 00. not sure if necessary 
+
 .copymovePP
 	ld de, wBattleMonPP + 1
 	ld bc, wPlayerMoveMaxPP + 1
 	ld hl, wBattleMonMoves + 1
 	ld b, $03
-.copyPPLoop ; copies pp value from the moves pointer table. fucking finally
+.copyPPLoop ; copies pp values from the moves pointer table
+            ; TODO: make this an actual loop rather than copy+paste it a bunch of times
 	ld a, [hli]     ; read move ID
 	and a
 	jp z, .lessThanFourMoves
