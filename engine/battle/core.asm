@@ -6353,6 +6353,7 @@ LoadEnemyMonData:
 	dec a
 	ld c, a
 	ld b, FLAG_SET
+	ld hl, wPokedexOwned
 	predef FlagActionPredef ; mark this mon as owned???
 
 	ld hl, wEnemyMonLevel
