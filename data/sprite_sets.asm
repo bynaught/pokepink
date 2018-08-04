@@ -60,6 +60,8 @@ SplitMapSpriteSets:
 
 SpriteSets:
 ; sprite set $01
+	db SPRITE_DITTO
+	db SPRITE_SIGN
 	db SPRITE_BLUE
 	db SPRITE_BUG_CATCHER
 	db SPRITE_GIRL
@@ -73,6 +75,7 @@ SpriteSets:
 	db SPRITE_LYING_OLD_MAN
 
 ; sprite set $02
+	db SPRITE_DITTO
 	db SPRITE_BUG_CATCHER
 	db SPRITE_ROCKET
 	db SPRITE_BLACK_HAIR_BOY_2
@@ -86,6 +89,7 @@ SpriteSets:
 	db SPRITE_LYING_OLD_MAN_UNUSED_2
 
 ; sprite set $03
+	db SPRITE_DITTO
 	db SPRITE_LITTLE_GIRL
 	db SPRITE_GIRL
 	db SPRITE_BLACK_HAIR_BOY_2
@@ -99,6 +103,7 @@ SpriteSets:
 	db SPRITE_LYING_OLD_MAN_UNUSED_2
 
 ; sprite set $04
+	db SPRITE_DITTO
 	db SPRITE_FOULARD_WOMAN
 	db SPRITE_BLACK_HAIR_BOY_2
 	db SPRITE_BUG_CATCHER
@@ -112,6 +117,7 @@ SpriteSets:
 	db SPRITE_LYING_OLD_MAN_UNUSED_2
 
 ; sprite set $05
+	db SPRITE_DITTO
 	db SPRITE_LITTLE_GIRL
 	db SPRITE_YOUNG_BOY
 	db SPRITE_GIRL
@@ -125,6 +131,7 @@ SpriteSets:
 	db SPRITE_SNORLAX
 
 ; sprite set $06
+	db SPRITE_DITTO
 	db SPRITE_BUG_CATCHER
 	db SPRITE_GYM_HELPER
 	db SPRITE_SLOWBRO
@@ -138,6 +145,7 @@ SpriteSets:
 	db SPRITE_LYING_OLD_MAN_UNUSED_2
 
 ; sprite set $07
+	db SPRITE_DITTO
 	db SPRITE_ROCKET
 	db SPRITE_OAK_AIDE
 	db SPRITE_LAPRAS_GIVER
@@ -151,6 +159,7 @@ SpriteSets:
 	db SPRITE_LYING_OLD_MAN_UNUSED_2
 
 ; sprite set $08
+	db SPRITE_DITTO
 	db SPRITE_BIKER
 	db SPRITE_BLACK_HAIR_BOY_2
 	db SPRITE_FAT_BALD_GUY
@@ -164,6 +173,7 @@ SpriteSets:
 	db SPRITE_SNORLAX
 
 ; sprite set $09
+	db SPRITE_DITTO
 	db SPRITE_BIKER
 	db SPRITE_BLACK_HAIR_BOY_1
 	db SPRITE_LAPRAS_GIVER
@@ -177,6 +187,7 @@ SpriteSets:
 	db SPRITE_SNORLAX
 
 ; sprite set $0a
+	db SPRITE_DITTO
 	db SPRITE_BIRD
 	db SPRITE_BLACK_HAIR_BOY_1
 	db SPRITE_CLEFAIRY
@@ -549,3 +560,13 @@ SpriteSheetPointerTable:
 	dw LyingOldManSprite
 	db $40 ; byte count
 	db BANK(LyingOldManSprite)
+
+	; SPRITE_DITTO
+	dw DittoSprite
+	db $c0
+	db BANK(DittoSprite)
+
+	; SPRITE_SIGN
+	dw SignSprite
+	db $c0
+	db BANK(SignSprite)

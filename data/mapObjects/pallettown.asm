@@ -11,15 +11,13 @@ PalletTownObject:
 	sign 7, 9, 5 ; PalletTownText5
 	sign 3, 5, 6 ; PalletTownText6
 	sign 11, 5, 7 ; PalletTownText7
-
-	db 3 ; objects
+                                ;X? Y?
+	db 3 ; objectname, globalindex, Y, X, movement, display, localindex
 	object SPRITE_OAK, 8, 5, STAY, NONE, 1 ; person
 	object SPRITE_GIRL, 3, 8, WALK, 0, 2 ; person
 	object SPRITE_FISHER2, 11, 14, WALK, 0, 3 ; person
-	; object SPRITE_X, 4, 2, WALK, 2, 4 ; secret
-
-	; object SPRITE_X2, 4, 2, STAY, NONE, 5 ; secret
-	; 4,2 are co-ords, can these be updated somehow? im sure they can
+	; object SPRITE_X, 2, 4, WALK, 2, 4 ; secret
+	; object SPRITE_X2, 2, 4, STAY, NONE, 5 ; secret
 
 	; warp-to
 	warp_to 5, 5, PALLET_TOWN_WIDTH ; REDS_HOUSE_1F

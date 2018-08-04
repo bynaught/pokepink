@@ -260,7 +260,7 @@ endm
 	spritestatedata1 Sprite12
 	spritestatedata1 Sprite13
 	spritestatedata1 Sprite14
-	spritestatedata1 Sprite15
+	spritestatedata1 Ditto
 	; in yellow, pikachu replaces sprite 15
 	; ds $10 * $10
 
@@ -319,7 +319,7 @@ endm
 	spritestatedata2 Sprite12
 	spritestatedata2 Sprite13
 	spritestatedata2 Sprite14
-	spritestatedata2 Sprite15
+	spritestatedata2 Ditto
 	; in yellow, pikachu replaces sprite 15
 	; ds $10 * $10
 
@@ -583,6 +583,11 @@ wAnimationType:: ; cc5b
 wNPCMovementDirections:: ; cc5b
 	ds 1
 
+wDittoPicUsedGFXCount:: ; cc5b
+	ds 1
+
+wDittoPicUsedGFX:: ; cc5c
+
 wDexRatingNumMonsOwned:: ; cc5c
 	ds 1
 
@@ -598,17 +603,37 @@ wSlotMachineSavedROMBank:: ; cc5e
 wAnimPalette:: ; cc79
 	ds 1
 
-	ds 29
+	ds 13
+
+wDittoPicUsedGFXEnd:: ; cc6c
+	ds 13
 
 wNPCMovementDirections2:: ; cc97
 
+wDittoPicAnimObjectDataBufferSize:: ; cc97
+
 wSwitchPartyMonTempBuffer:: ; cc97
 ; temporary buffer when swapping party mon data
-	ds 10
+	ds 1
+
+wDittoPicAnimObjectDataBuffer:: ; cc98
+; 4 structs each of length 8
+; 	0: buffer index
+; 	1: script index
+;   2: frame index
+; 	3: frame timer
+; 	4: vtile offset
+; 	5: x offset
+; 	6: y offset
+; 	7: unused
+
+	ds 9
 
 wNumStepsToTake:: ; cca1
 ; used in Pallet Town scripted movement
-	ds 49
+	ds 23
+wDittoPicAnimObjectDataBufferEnd:: ;ccb8
+	ds 26
 
 wRLEByteCount:: ; ccd2
 	ds 1
@@ -1403,6 +1428,7 @@ wGBC:: ; cf1a
 
 	; HERE!! here it is!! from this point on, RB addresses are 1 higher than Y,
 	; because Y does not have this GBC byte, only the SGB one.
+	; diverge
 
 wOnSGB:: ; cf1b
 ; if running on SGB, it's 1, else it's 0

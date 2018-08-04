@@ -289,6 +289,87 @@ DeterminePaletteIDOutOfBattle:
 	ld a, [hl]
 	ret
 
+; pikachu palette functions from yellow. TODO: check out which palettes i need and change
+LoadOverworldDittoFrontpicPalettes::
+	ld hl, PalPacket_Empty
+	ld de, wPalPacket
+	ld bc, $10
+	call CopyData
+	call GetPal_Ditto
+	ld hl, wPartyMenuBlkPacket
+	ld [hl], a
+	ld hl, wPartyMenuBlkPacket + 2
+	ld a, $26
+	ld [hl], a
+	ld hl, wPalPacket
+	ld a, [hGBC]
+	and a
+	jr nz, .cgb_1
+	call SendSGBPacket
+	jr .okay_1
+
+.cgb_1
+	call InitGBCPalettes
+.okay_1
+	ld hl, BlkPacket_WholeScreen
+	ld de, wPalPacket
+	ld bc, $10
+	call CopyData
+	ld hl, wPartyMenuBlkPacket + 2
+	ld a, $5
+	ld [hli], a
+	ld a, $7
+	ld [hli], a
+	ld a, $6
+	ld [hli], a
+	ld a, $b
+	ld [hli], a
+	ld a, $a
+	ld [hl], a
+	ld hl, wPalPacket
+	ld a, [hGBC]
+	and a
+	jr nz, .cgb_2
+	call SendSGBPacket
+	jr .okay_2
+
+.cgb_2
+	call InitGBCPalettes
+.okay_2
+	ret
+
+GetPal_Ditto::
+; similar to SetPal_Overworld
+	ld a, [wCurMapTileset]
+	cp CEMETERY
+	jr z, .PokemonTowerOrAgatha
+	cp CAVERN
+	jr z, .caveOrBruno
+	ld a, [wCurMap]
+	cp REDS_HOUSE_1F
+	jr c, .townOrRoute
+	cp UNKNOWN_DUNGEON_2
+	jr c, .normalDungeonOrBuilding
+	cp NAME_RATERS_HOUSE
+	jr c, .caveOrBruno
+	cp LORELEIS_ROOM
+	jr z, .Lorelei
+	cp BRUNOS_ROOM
+	jr z, .caveOrBruno
+	cp TRADE_CENTER
+	jr z, .battleOrTradeCenter
+	cp COLOSSEUM
+	jr z, .battleOrTradeCenter
+.normalDungeonOrBuilding
+	ld a, [wLastMap] ; town or route that current dungeon or building is located
+.townOrRoute
+	cp SAFFRON_CITY + 1
+	jr c, .town
+	ld a, PAL_ROUTE - 1
+.town
+	inc a ; a town's pallete ID is its map ID + 1
+	ret
+
 InitPartyMenuBlkPacket:
 	ld hl, BlkPacket_PartyMenu
 	ld de, wPartyMenuBlkPacket

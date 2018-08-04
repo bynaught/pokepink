@@ -1846,6 +1846,35 @@ SendOutMon:
 	call RunPaletteCommand
 	ld hl, wEnemyBattleStatus1
 	res USING_TRAPPING_MOVE, [hl]
+; below is what yellow does, and checks if you're sending out the starter that isn't in a pokeball
+; callab IsThisPartymonStarterPikachu
+; 	jr c, .starterPikachu
+; 	ld a, $1
+; 	ld [H_WHOSETURN], a
+; 	ld a, POOF_ANIM
+; 	call PlayMoveAnimation
+; 	coord hl, 4, 11
+; 	predef AnimateSendingOutMon
+; 	jr .playRegularCry
+; .starterPikachu
+; 	xor a
+; 	ld [H_WHOSETURN], a
+; 	ld a, $1
+; 	ld [H_AUTOBGTRANSFERENABLED], a
+; 	callab StarterPikachuBattleEntranceAnimation
+; 	callab IsPlayerPikachuAsleepInParty
+; 	ld e, $24
+; 	jr c, .asm_3cd81
+; 	ld e, $a
+; .asm_3cd81
+; 	callab PlayPikachuSoundClip
+; 	jr .done
+; .playRegularCry
+; 	ld a, [wcf91]
+; 	call PlayCry
+; .done
+; 	call PrintEmptyString
+; 	jp SaveScreenTilesToBuffer1
 	ld a, $1
 	ld [H_WHOSETURN], a
 	ld a, POOF_ANIM
@@ -1859,6 +1888,16 @@ SendOutMon:
 
 ; show 2 stages of the player mon getting smaller before disappearing
 AnimateRetreatingPlayerMon:
+; added yellow sliding off pikachu
+ld a, [wWhichPokemon]
+	; push af
+	; ld a, [wPlayerMonNumber]
+	; ld [wWhichPokemon], a
+	; callab IsThisPartymonStarterPikachu
+	; pop bc
+	; ld a, b
+	; ld [wWhichPokemon], a
+	; jr c, .starterPikachu
 	coord hl, 1, 5
 	lb bc, 7, 7
 	call ClearScreenArea
@@ -1882,6 +1921,17 @@ AnimateRetreatingPlayerMon:
 	call .clearScreenArea
 	ld a, $4c
 	Coorda 5, 11
+	jr .clearScreenArea
+; .starterPikachu
+; 	xor a
+; 	ld [H_WHOSETURN], a
+; 	callab AnimationSlideMonOff
+; 	ret
+; .clearScreenArea
+; 	coord hl, 1, 5
+; 	lb bc, 7, 7
+; 	call ClearScreenArea
+; 	ret
 .clearScreenArea
 	coord hl, 1, 5
 	lb bc, 7, 7
@@ -8730,3 +8780,53 @@ PlayBattleAnimationGotID:
 	pop de
 	pop hl
 	ret
+
+; below is the animation for pokemon without pokeballs from yellow
+
+; StarterPikachuBattleEntranceAnimation:
+; 	coord hl, 0, 5
+; 	ld c, 0
+; .loop1
+; 	inc c
+; 	ld a, c
+; 	cp 9
+; 	ret z
+; 	ld d, 7 * 13
+; 	push bc
+; 	push hl
+; .loop2
+; 	call .PlaceColumn
+; 	dec hl
+; 	ld a, d
+; 	sub 7
+; 	ld d, a
+; 	dec c
+; 	jr nz, .loop2
+; 	ld c, 2
+; 	call DelayFrames
+; 	pop hl
+; 	pop bc
+; 	inc hl
+; 	jr .loop1
+
+; .PlaceColumn:
+; 	push hl
+; 	push de
+; 	push bc
+; 	ld e, 7
+; .loop3
+; 	ld a, d
+; 	cp 7 * 7
+; 	jr nc, .okay
+; 	ld a, $7f
+; .okay
+; 	ld [hl], a
+; 	ld bc, SCREEN_WIDTH
+; 	add hl, bc
+; 	inc d
+; 	dec e
+; 	jr nz, .loop3
+; 	pop bc
+; 	pop de
+; 	pop hl
+; 	ret

@@ -73,6 +73,8 @@ RedisplayStartMenu::
 	cp 4
 	jp z, StartMenu_SaveReset
 	cp 5
+	;jp z, StartMenu_Moves adding HM menu
+	;cp 6
 	jp z, StartMenu_Option
 
 ; EXIT falls through to here
