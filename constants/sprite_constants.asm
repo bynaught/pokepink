@@ -87,6 +87,8 @@ const_value = 1
 	const SPRITE_LYING_OLD_MAN_UNUSED_1    ; $46
 	const SPRITE_LYING_OLD_MAN_UNUSED_2    ; $47
 	const SPRITE_LYING_OLD_MAN             ; $48
+	const SPRITE_X             		       ; $49 added sprite
+	const SPRITE_X2                        ; $4a added sprite
 
 ; different kinds of people events
 ITEM    EQU $80
