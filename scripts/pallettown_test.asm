@@ -85,14 +85,13 @@ PalletTownScript0:
 PalletTownScript1:
 	xor a
 	ld [wcf0d], a   ; this address is used to decide which oak text to use
-	ld a, 1
-	ld [hSpriteIndexOrTextID], a ; display pallet town text 1
-	call DisplayTextID ; hey stop it's dangerous text
+	ld hl, DangerousText
+	call PrintText ; hey stop it's dangerous text
 	;ld a, $FC
 	;ld [wJoyIgnore], a   ; keep ignoring?
-	; trigger the next script
-	ld a, 2
-	ld [wPalletTownCurScript], a   ; script 2
+	; don't trigger the next script
+	;ld a, 2
+	;ld [wPalletTownCurScript], a   ; script 2
 	call StartSimulatingJoypadStates
 	ld a, $1
 	ld [wSimulatedJoypadStatesIndex], a
@@ -153,6 +152,11 @@ PalletTownScript3:
 	ld a, 1
 	ld [hSpriteIndexOrTextID], a ; oak speaks to you before leading you to lab text
 	call DisplayTextID
+	ld hl, DittoJoinText
+	call PrintText
+	ld a, HS_SECRET_DITTO
+	ld [wMissableObjectIndex], a
+	predef HideObject
 ; set up movement script that causes the player to follow Oak to his lab
 	ld a, $FF
 	ld [wJoyIgnore], a
@@ -213,9 +217,9 @@ PalletTownText1: ; oak warns (text), then appears, walks up, and then speaks to 
 	ld a, [wcf0d]
 	and a
 	jr nz, .next
-;	ld a, 1
-;	ld [wDoNotWaitForButtonPressAfterDisplayingText], a
-	ld hl, DangerousText
+	ld a, 1
+	ld [wDoNotWaitForButtonPressAfterDisplayingText], a
+	ld hl, OakAppearsText
 	jr .done
 .next
 	ld hl, OakWalksUpText

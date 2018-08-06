@@ -7,11 +7,12 @@ _DangerousText::
 	line "your own #MON!"
     done
 
+_OakAppearsText::
+    text "OAK: Oh my!"
 
 _OakWalksUpText::
-	text "OAK: Oh my!"
-	line "That #MON is a"
-	cont "DITTO."
+    text "OAK: That #MON"
+	line "is a DITTO."
 
 	para "It seems to be"
 	line "very fond of you!"
@@ -20,6 +21,11 @@ _OakWalksUpText::
 	para "Here, come with"
 	line "me!"
 	done
+
+_DittoJoinText::
+    text "The DITTO lets"
+    line "you pick it up!"
+    done
 
 _PalletTownText2::
 	text "I'm raising"
