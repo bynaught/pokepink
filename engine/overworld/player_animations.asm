@@ -34,6 +34,8 @@ EnterMapAnim:
 	ld [hl], $ff ; wPlayerSpinInPlaceAnimSoundID
 	ld hl, wFacingDirectionList
 	call PlayerSpinInPlace
+	ld a, $1
+	ld [wDittoSpawnState], a
 .restoreDefaultMusic
 	call PlayDefaultMusic
 .done
@@ -42,6 +44,8 @@ EnterMapAnim:
 	ld c, 50
 	call DelayFrames
 	call PlayerSpinWhileMovingDown
+	ld a, $0
+	ld [wDittoSpawnState], a
 	jr .done
 .flyAnimation
 	pop hl
@@ -61,6 +65,8 @@ EnterMapAnim:
 	ld de, FlyAnimationEnterScreenCoords
 	call DoFlyAnimation
 	call LoadPlayerSpriteGraphics
+	ld a, $1
+	ld [wDittoSpawnState], a
 	jr .restoreDefaultMusic
 
 FlyAnimationEnterScreenCoords:

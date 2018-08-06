@@ -1,5 +1,9 @@
 BattleCore:
 
+; Credit to TheFakeMateo for the physical/special split and adaptations to the battle engine
+; these changes can be found at https://github.com/TheFakeMateo/rpp-backup
+
+
 ; These are move effects (second value from the Moves table in bank $E).
 ResidualEffects1:
 ; most non-side effects
@@ -3013,13 +3017,27 @@ PrintMenuItem:
 	ld a, [hl]
 	and $3f
 	ld [wcd6d], a
-; print TYPE/<type> and <curPP>/<maxPP>
+	ld a, [wPlayerSelectedMove]
+	call PhysicalSpecialSplit
+	cp a,$02
+	jp z, .OtherTextShow
+	cp a,$01
+	jp nz, .PhysicalTextShow
 	coord hl, 1, 9
-	ld de, TypeText
+	ld de,SpecialText
 	call PlaceString
+	jp .RestOfTheRoutineThing
+.PhysicalTextShow
+	coord hl, 1,9
+	ld de,PhysicalText
+	call PlaceString
+	jr .RestOfTheRoutineThing
+.OtherTextShow
+	coord hl, 1,9
+	ld de,OtherText
+	call PlaceString
+.RestOfTheRoutineThing
 	coord hl, 7, 11
-	ld [hl], "/"
-	coord hl, 5, 9
 	ld [hl], "/"
 	coord hl, 5, 11
 	ld de, wcd6d
@@ -3037,11 +3055,21 @@ PrintMenuItem:
 	ld [H_AUTOBGTRANSFERENABLED], a
 	jp Delay3
 
+; credit to TheFakeMateo and their Red++ romhack
+; https://github.com/TheFakeMateo/rpp-backup/
+; for the physical/special split code
+
 DisabledText:
 	db "disabled!@"
 
-TypeText:
-	db "TYPE@"
+OtherText:
+	db "Status@"
+
+PhysicalText: ; Added for PS Split
+	db "Physical@"
+
+SpecialText: ; added for PS Split
+	db "Special@"
 
 SelectEnemyMove:
 	ld a, [wLinkState]
@@ -4292,22 +4320,24 @@ GetDamageVarsForPlayerAttack:
 	ld hl, wPlayerMovePower
 	ld a, [hli]
 	and a
-	ld d, a ; d = move power
-	ret z ; return if move power is zero
-	ld a, [hl] ; a = [wPlayerMoveType]
-	cp FIRE ; types >= FIRE are all special
-	jr nc, .specialAttack
+	ld d, a         ;*D = attack base, used later
+	ret z           ;return if attack is zero
+	ld a,[wPlayerSelectedMove]
+	call PhysicalSpecialSplit
+	cp a, SPECIAL
+	jr z, .specialAttack
 .physicalAttack
 	ld hl, wEnemyMonDefense
 	ld a, [hli]
 	ld b, a
 	ld c, [hl] ; bc = enemy defense
 	ld a, [wEnemyBattleStatus3]
-	bit HAS_REFLECT_UP, a ; check for Reflect
-	jr z, .physicalAttackCritCheck
+	bit HasReflectUp, a ; check for Reflect
+	;jr z, .physicalAttackCritCheck
 ; if the enemy has used Reflect, double the enemy's defense
 	sla c
 	rl b
+	call CapBCAt1023
 .physicalAttackCritCheck
 	ld hl, wBattleMonAttack
 	ld a, [wCriticalHitOrOHKO]
@@ -4333,11 +4363,12 @@ GetDamageVarsForPlayerAttack:
 	ld b, a
 	ld c, [hl] ; bc = enemy special
 	ld a, [wEnemyBattleStatus3]
-	bit HAS_LIGHT_SCREEN_UP, a ; check for Light Screen
-	jr z, .specialAttackCritCheck
+	bit HasLightScreenUp, a ; check for Light Screen
+	;jr z, .specialAttackCritCheck
 ; if the enemy has used Light Screen, double the enemy's special
 	sla c
 	rl b
+	call CapBCAt1023
 ; reflect and light screen boosts do not cap the stat at 999, so weird things will happen during stats scaling if
 ; a Pokemon with 512 or more Defense has used Reflect, or if a Pokemon with 512 or more Special has used Light Screen
 .specialAttackCritCheck
@@ -4352,7 +4383,7 @@ GetDamageVarsForPlayerAttack:
 	ld b, a
 	ld a, [H_PRODUCT + 3]
 	ld c, a
-	push bc
+	push bc	
 	ld hl, wPartyMon1Special
 	ld a, [wPlayerMonNumber]
 	ld bc, wPartyMon2 - wPartyMon1
@@ -4406,21 +4437,23 @@ GetDamageVarsForEnemyAttack:
 	ld a, [hli]
 	ld d, a ; d = move power
 	and a
-	ret z ; return if move power is zero
-	ld a, [hl] ; a = [wEnemyMoveType]
-	cp FIRE ; types >= FIRE are all special
-	jr nc, .specialAttack
+	ret z
+	ld a,[wEnemySelectedMove]
+	call PhysicalSpecialSplit
+	cp a, SPECIAL
+	jr z, .specialAttack
 .physicalAttack
 	ld hl, wBattleMonDefense
 	ld a, [hli]
 	ld b, a
 	ld c, [hl] ; bc = player defense
 	ld a, [wPlayerBattleStatus3]
-	bit HAS_REFLECT_UP, a ; check for Reflect
-	jr z, .physicalAttackCritCheck
+	bit HasReflectUp, a ; check for Reflect
+	;jr z, .physicalAttackCritCheck
 ; if the player has used Reflect, double the player's defense
 	sla c
 	rl b
+	call CapBCAt1023
 .physicalAttackCritCheck
 	ld hl, wEnemyMonAttack
 	ld a, [wCriticalHitOrOHKO]
@@ -4446,11 +4479,12 @@ GetDamageVarsForEnemyAttack:
 	ld b, a
 	ld c, [hl]
 	ld a, [wPlayerBattleStatus3]
-	bit HAS_LIGHT_SCREEN_UP, a ; check for Light Screen
-	jr z, .specialAttackCritCheck
+	bit HasLightScreenUp, a ; check for Light Screen
+	;jr z, .specialAttackCritCheck
 ; if the player has used Light Screen, double the player's special
 	sla c
 	rl b
+	call CapBCAt1023
 ; reflect and light screen boosts do not cap the stat at 999, so weird things will happen during stats scaling if
 ; a Pokemon with 512 or more Defense has used Reflect, or if a Pokemon with 512 or more Special has used Light Screen
 .specialAttackCritCheck
@@ -4815,60 +4849,58 @@ HandleCounterMove:
 ; the outcome may be affected by the player's actions in the move selection menu prior to switching the Pokemon.
 ; This might also lead to desync glitches in link battles.
 
-	ld a, [H_WHOSETURN] ; whose turn
+	ld a,[H_WHOSETURN] ; whose turn
 	and a
 ; player's turn
-	ld hl, wEnemySelectedMove
-	ld de, wEnemyMovePower
-	ld a, [wPlayerSelectedMove]
-	jr z, .next
+	ld hl,wEnemySelectedMove
+	ld de,wEnemyMovePower
+	ld a,[wPlayerSelectedMove]
+	jr z,.next
 ; enemy's turn
-	ld hl, wPlayerSelectedMove
-	ld de, wPlayerMovePower
-	ld a, [wEnemySelectedMove]
+	ld hl,wPlayerSelectedMove
+	ld de,wPlayerMovePower
+	ld a,[wEnemySelectedMove]
 .next
-	cp COUNTER
+	cp a,COUNTER
 	ret nz ; return if not using Counter
-	ld a, $01
-	ld [wMoveMissed], a ; initialize the move missed variable to true (it is set to false below if the move hits)
-	ld a, [hl]
-	cp COUNTER
+	ld a,$01
+	ld [wMoveMissed],a ; initialize the move missed variable to true (it is set to false below if the move hits)
+	ld a,[hl]
+	cp a,COUNTER
 	ret z ; miss if the opponent's last selected move is Counter.
-	ld a, [de]
+	ld a,[de]
 	and a
 	ret z ; miss if the opponent's last selected move's Base Power is 0.
-; check if the move the target last selected was Normal or Fighting type
-	inc de
-	ld a, [de]
-	and a ; normal type
-	jr z, .counterableType
-	cp FIGHTING
-	jr z, .counterableType
+; check if the move the target last selected was Physical
+	ld a,[hl]
+	call PhysicalSpecialSplit
+	cp a, PHYSICAL
+	jr z,.counterableType
 ; if the move wasn't Normal or Fighting type, miss
 	xor a
 	ret
 .counterableType
-	ld hl, wDamage
-	ld a, [hli]
+	ld hl,wDamage
+	ld a,[hli]
 	or [hl]
 	ret z ; If we made it here, Counter still misses if the last move used in battle did no damage to its target.
 	      ; wDamage is shared by both players, so Counter may strike back damage dealt by the Counter user itself
 	      ; if the conditions meet, even though 99% of the times damage will come from the target.
 ; if it did damage, double it
-	ld a, [hl]
+	ld a,[hl]
 	add a
-	ldd [hl], a
-	ld a, [hl]
+	ldd [hl],a
+	ld a,[hl]
 	adc a
-	ld [hl], a
-	jr nc, .noCarry
+	ld [hl],a
+	jr nc,.noCarry
 ; damage is capped at 0xFFFF
-	ld a, $ff
-	ld [hli], a
-	ld [hl], a
+	ld a,$ff
+	ld [hli],a
+	ld [hl],a
 .noCarry
 	xor a
-	ld [wMoveMissed], a
+	ld [wMoveMissed],a
 	call MoveHitTest ; do the normal move hit test in addition to Counter's special rules
 	xor a
 	ret

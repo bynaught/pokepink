@@ -156,6 +156,8 @@ ClipboardSprite:       INCBIN "gfx/sprites/clipboard.2bpp"
 SnorlaxSprite:         INCBIN "gfx/sprites/snorlax.2bpp"
 OldAmberSprite:        INCBIN "gfx/sprites/old_amber.2bpp"
 LyingOldManSprite:     INCBIN "gfx/sprites/lying_old_man.2bpp"
+DittoSprite:           INCBIN "gfx/sprites/dittoalt.2bpp"
+SignSprite:            INCBIN "gfx/sprites/sign.2bpp"
 
 
 SECTION "Graphics", ROMX, BANK[GFX]
@@ -2233,11 +2235,12 @@ INCLUDE "engine/items/tm_prices.asm"
 ; INCBIN "gfx/pikachu/unknown_e7d13.2bpp"
 
 
-; SECTION "bank3A", ROMX
+ SECTION "bank3A", ROMX
 
 ; INCLUDE "text/monster_names.asm"
 
-; INCLUDE "engine/overworld/is_player_just_outside_map.asm"
+
+ INCLUDE "engine/overworld/is_player_just_outside_map.asm"
 
 ; INCLUDE "engine/printer.asm"
 ; INCLUDE "engine/diploma_3a.asm"
@@ -2249,22 +2252,23 @@ INCLUDE "engine/items/tm_prices.asm"
 
 ; INCLUDE "engine/overworld/npc_movement_2.asm"
 
-; SECTION "bank3C", ROMX
+ SECTION "bank3C", ROMX
 
-; INCLUDE "engine/bank3c.asm"
-
-
-; SECTION "bank3D", ROMX
-
-; INCLUDE "engine/bank3d.asm"
+ INCLUDE "engine/bank3c.asm"
+ INCLUDE "engine/battle/physical_special_split.asm"
 
 
-; SECTION "bank3E", ROMX
+ SECTION "bank3D", ROMX
 
-; INCLUDE "engine/bank3e.asm"
+ INCLUDE "engine/bank3d.asm"
 
 
-; SECTION "bank3F", ROMX
+ SECTION "bank3E", ROMX
 
-; INCLUDE "engine/bank3f.asm"
+ INCLUDE "engine/bank3e.asm"
+
+
+ SECTION "bank3F", ROMX
+
+ INCLUDE "engine/bank3f.asm"
 

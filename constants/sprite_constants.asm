@@ -11,6 +11,7 @@ const_value = 0
 	const SPRITE_GRASS     ; $7
 	const SPRITE_SNAKE     ; $8
 	const SPRITE_QUADRUPED ; $9
+	const SPRITE_DITTO     ; $A
 
 ; overworld sprites
 const_value = 1
@@ -87,8 +88,8 @@ const_value = 1
 	const SPRITE_LYING_OLD_MAN_UNUSED_1    ; $46
 	const SPRITE_LYING_OLD_MAN_UNUSED_2    ; $47
 	const SPRITE_LYING_OLD_MAN             ; $48
-	const SPRITE_X             		       ; $49 added sprite
-	const SPRITE_X2                        ; $4a added sprite
+	const SPRITE_DITTO             		   ; $49 added sprite
+	const SPRITE_SIGN                      ; $4a added sprite
 
 ; different kinds of people events
 ITEM    EQU $80

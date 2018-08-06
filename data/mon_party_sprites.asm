@@ -1,4 +1,15 @@
 MonPartyData:
+; MON = 0
+; BALL_M = 1
+; HELIX = 2
+; FAIRY = 3
+; BIRD_M = 4
+; WATER = 5
+; BUG = 6
+; GRASS = 7
+; SNAKE = 8
+; QUADRUPED = 9
+; DITTO = A
 	dn SPRITE_GRASS, SPRITE_GRASS           ;Bulbasaur/Ivysaur
 	dn SPRITE_GRASS, SPRITE_MON             ;Venusaur/Charmander
 	dn SPRITE_MON, SPRITE_MON               ;Charmeleon/Charizard
@@ -64,7 +75,7 @@ MonPartyData:
 	dn SPRITE_MON, SPRITE_MON               ;Electabuzz/Magmar
 	dn SPRITE_BUG, SPRITE_QUADRUPED         ;Pinsir/Tauros
 	dn SPRITE_WATER, SPRITE_SNAKE           ;Magikarp/Gyarados
-	dn SPRITE_WATER, SPRITE_MON             ;Lapras/Ditto
+	dn SPRITE_WATER, SPRITE_DITTO_FAM       ;Lapras/Ditto
 	dn SPRITE_QUADRUPED, SPRITE_QUADRUPED   ;Eevee/Vaporeon
 	dn SPRITE_QUADRUPED, SPRITE_QUADRUPED   ;Jolteon/Flareon
 	dn SPRITE_MON, SPRITE_HELIX             ;Porygon/Omanyte

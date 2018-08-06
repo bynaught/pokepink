@@ -1,12 +1,12 @@
-ShouldPikachuSpawn::
+ShouldDittoSpawn::
 ; possibly to test if pika should be out?
-	ld a, [wPikachuOverworldStateFlags]
+	ld a, [wDittoOverworldStateFlags]
 	bit 5, a
 	jr nz, .hide
-	ld a, [wPikachuOverworldStateFlags]
+	ld a, [wDittoOverworldStateFlags]
 	bit 7, a
 	jr nz, .hide
-	call IsStarterPikachuInOurParty
+	call IsStarterDittoInOurParty
 	jr nc, .hide
 	ld a, [wWalkBikeSurfState]
 	and a
@@ -18,53 +18,53 @@ ShouldPikachuSpawn::
 	and a
 	ret
 
-SchedulePikachuSpawnForAfterText::
-	ld hl, wPikachuOverworldStateFlags
+ScheduleDittoSpawnForAfterText::
+	ld hl, wDittoOverworldStateFlags
 	bit 4, [hl]
 	res 4, [hl]
 	jr nz, .normal_spawn_state
-	call EnablePikachuFollowingPlayer
-	call ClearPikachuSpriteStateData
+	call EnableDittoFollowingPlayer
+	call ClearDittoSpriteStateData
 	ld a, $ff
-	ld [wPikachuSpriteImageIdx], a
-	call ClearPikachuFollowCommandBuffer
-	call CalculatePikachuFacingDirection
+	ld [wDittoSpriteImageIdx], a
+	call ClearDittoFollowCommandBuffer
+	call CalculateDittoFacingDirection
 	ret
 
 .normal_spawn_state
-	call CalculatePikachuPlacementCoords
+	call CalculateDittoPlacementCoords
 	xor a
-	ld [wPikachuSpawnState], a
+	ld [wDittoSpawnState], a
 	ld a, [wPlayerFacingDirection]
-	ld [wPikachuFacingDirection], a
+	ld [wDittoFacingDirection], a
 	ret
 
-ClearPikachuSpriteStateData::
-	ld hl, wPikachuPictureID
+ClearDittoSpriteStateData::
+	ld hl, wDittoPictureID
 	call .clear
-	ld hl, wPikachuSpriteStateData2
+	ld hl, wDittoSpriteStateData2
 .clear
 	ld bc, $10
 	xor a
 	call FillMemory
 	ret
 
-CalculatePikachuSpawnCoordsAndFacing::
-	call CalculatePikachuPlacementCoords
-	call CalculatePikachuFacingDirection
+CalculateDittoSpawnCoordsAndFacing::
+	call CalculateDittoPlacementCoords
+	call CalculateDittoFacingDirection
 	xor a
-	ld [wPikachuSpawnState], a
+	ld [wDittoSpawnState], a
 	ret
 
-CalculatePikachuPlacementCoords::
-	ld bc, wPikachuPictureID
+CalculateDittoPlacementCoords::
+	ld bc, wDittoPictureID
 	ld a, [wYCoord]
 	add $4
 	ld e, a
 	ld a, [wXCoord]
 	add $4
 	ld d, a
-	ld a, [wPikachuSpawnState]
+	ld a, [wDittoSpawnState]
 	and a
 	jr z, .load_coords
 	cp $1
@@ -145,12 +145,12 @@ CalculatePikachuPlacementCoords::
 	pop hl
 	ret
 
-CalculatePikachuFacingDirection::
+CalculateDittoFacingDirection::
 	ld a, $49
-	ld [wPikachuPictureID], a
+	ld [wDittoPictureID], a
 	ld a, $ff
-	ld [wPikachuSpriteImageIdx], a
-	ld a, [wPikachuSpawnState]
+	ld [wDittoSpriteImageIdx], a
+	ld a, [wDittoSpawnState]
 	and a
 	jr z, .copy_player_facing
 	cp $1
@@ -163,26 +163,26 @@ CalculatePikachuFacingDirection::
 	jr z, .copy_player_facing
 	cp $7
 	jr z, .face_the_other_way
-	call ComputePikachuFacingDirection
+	call ComputeDittoFacingDirection
 	ret
 
 .copy_player_facing
 	ld a, [wPlayerFacingDirection]
-	ld [wPikachuFacingDirection], a
+	ld [wDittoFacingDirection], a
 	ret
 
 .force_facing_down
 	ld a, SPRITE_FACING_DOWN
-	ld [wPikachuFacingDirection], a
+	ld [wDittoFacingDirection], a
 	ret
 
 .face_the_other_way
 	ld a, [wPlayerFacingDirection]
 	xor $4
-	ld [wPikachuFacingDirection], a
+	ld [wDittoFacingDirection], a
 	ret
 
-CalculatePikachuSpawnState1::
+CalculateDittoSpawnState1::
 	ld a, [wCurMap]
 	cp OAKS_LAB
 	jr z, .oaks_lab
@@ -194,11 +194,11 @@ CalculatePikachuSpawnState1::
 	jr z, .rock_tunnel_1
 	ld a, [wCurMap]
 	ld hl, Pointer_fc64b
-	call Pikachu_IsInArray ; similar to IsInArray, but not the same
+	call Ditto_IsInArray ; similar to IsInArray, but not the same
 	jr c, .map_list_1
 	ld a, [wCurMap]
 	ld hl, Pointer_fc653
-	call Pikachu_IsInArray
+	call Ditto_IsInArray
 	jr nc, .not_map_list_2
 	ld a, [wPlayerFacingDirection]
 	and a
@@ -231,7 +231,7 @@ CalculatePikachuSpawnState1::
 .rock_tunnel_1
 	ld a, $3
 .load
-	ld [wPikachuSpawnState], a
+	ld [wDittoSpawnState], a
 	ret
 
 Pointer_fc64b::
@@ -254,7 +254,7 @@ Pointer_fc653::
 	db FUCHSIA_HOUSE_3
 	db $ff
 
-CalculatePikachuSpawnState2::
+CalculateDittoSpawnState2::
 	ld a, [wCurMap]
 	cp VIRIDIAN_FOREST_EXIT
 	jr z, .viridian_forest_exit
@@ -262,7 +262,7 @@ CalculatePikachuSpawnState2::
 	jr z, .viridian_forest_entrance
 	ld a, [wCurMap]
 	ld hl, Pointer_fc68e
-	call Pikachu_IsInArray
+	call Ditto_IsInArray
 	jr c, .in_array
 	jr .not_in_array
 
@@ -285,7 +285,7 @@ CalculatePikachuSpawnState2::
 .in_array
 	ld a, $1
 .load_spawn_state
-	ld [wPikachuSpawnState], a
+	ld [wDittoSpawnState], a
 	ret
 
 Pointer_fc68e::
@@ -302,7 +302,7 @@ Pointer_fc68e::
 	db CINNABAR_LAB_4
 	db $ff
 
-CalculatePikachuSpawnState3::
+CalculateDittoSpawnState3::
 	ld a, [wCurMap]
 	cp ROUTE_22_GATE
 	jr z, .asm_fc6a7
@@ -331,42 +331,42 @@ CalculatePikachuSpawnState3::
 	jr .asm_fc6c1
 
 .asm_fc6c1
-	ld [wPikachuSpawnState], a
+	ld [wDittoSpawnState], a
 	ret
 
-SetPikachuOverworldStateFlag2::
+SetDittoOverworldStateFlag2::
 	push hl
-	ld hl, wPikachuOverworldStateFlags
+	ld hl, wDittoOverworldStateFlags
 	set 2, [hl]
 	pop hl
 	ret
 
-ResetPikachuOverworldStateFlag2::
+ResetDittoOverworldStateFlag2::
 	push hl
-	ld hl, wPikachuOverworldStateFlags
+	ld hl, wDittoOverworldStateFlags
 	res 2, [hl]
 	pop hl
 	ret
 
-SpawnPikachu_::
-	call ResetPikachuOverworldStateFlag2
-	call TrySpawnPikachu
+SpawnDitto_::
+	call ResetDittoOverworldStateFlag2
+	call TrySpawnDitto
 	ret nc
 
 	push bc
-	call WillPikachuSpawnOnTheScreen
+	call WillDittoSpawnOnTheScreen
 	pop bc
 	ret c
 
-	ld bc, wPikachuSpriteStateData1
-	ld hl, wPikachuMovementStatus - wPikachuSpriteStateData1
+	ld bc, wDittoSpriteStateData1
+	ld hl, wDittoMovementStatus - wDittoSpriteStateData1
 	add hl, bc
 	bit 7, [hl]
 	jp nz, Func_fc745
 	ld a, [wFontLoaded]
 	bit 0, a
 	jp nz, Func_fc76a
-	call CheckPikachuFollowingPlayer
+	call CheckDittoFollowingPlayer
 	jp nz, Func_fc76a
 	ld a, [hl]
 	and $7f
@@ -400,15 +400,15 @@ PointerTable_fc710:
 .nop:
 	ret
 
-TrySpawnPikachu:
-	call ShouldPikachuSpawn
+TrySpawnDitto:
+	call ShouldDittoSpawn
 	jr nc, .dont_spawn
-	ld a, [wPikachuMovementStatus]
+	ld a, [wDittoMovementStatus]
 	and a
 	jr nz, .already_spawned
 	push bc
 	push hl
-	call CalculatePikachuSpawnCoordsAndFacing
+	call CalculateDittoSpawnCoordsAndFacing
 	pop hl
 	pop bc
 .already_spawned
@@ -416,7 +416,7 @@ TrySpawnPikachu:
 	ret
 
 .dont_spawn
-	ld hl, wPikachuSpriteImageIdx
+	ld hl, wDittoSpriteImageIdx
 	ld [hl], $ff
 	dec hl
 	ld [hl], $0
@@ -424,57 +424,57 @@ TrySpawnPikachu:
 	ret
 
 Func_fc745:
-	ld hl, wPikachuMovementStatus - wPikachuSpriteStateData1
+	ld hl, wDittoMovementStatus - wDittoSpriteStateData1
 	add hl, bc
 	res 7, [hl]
-	ld hl, wPikachuWalkAnimationCounter - wPikachuSpriteStateData1
+	ld hl, wDittoWalkAnimationCounter - wDittoSpriteStateData1
 	add hl, bc
 	ld [hl], a
-	call CheckPikachuFollowingPlayer
+	call CheckDittoFollowingPlayer
 	jr nz, .okay
-	; Have Pikachu face in the opposite direction of you
+	; Have Ditto face in the opposite direction of you
 	ld a, [wPlayerFacingDirection]
 	xor $4
-	ld hl, wPikachuFacingDirection - wPikachuSpriteStateData1
+	ld hl, wDittoFacingDirection - wDittoSpriteStateData1
 	add hl, bc
 	ld [hl], a
 .okay
 	xor a
-	ld hl, wPikachuIntraAnimFrameCounter - wPikachuSpriteStateData1
+	ld hl, wDittoIntraAnimFrameCounter - wDittoSpriteStateData1
 	add hl, bc
 	ld [hli], a
 	ld [hl], a
-	call UpdatePikachuWalkingSprite
+	call UpdateDittoWalkingSprite
 	ret
 
 Func_fc76a:
 	xor a
-	ld hl, wPikachuIntraAnimFrameCounter - wPikachuSpriteStateData1
+	ld hl, wDittoIntraAnimFrameCounter - wDittoSpriteStateData1
 	add hl, bc
 	ld [hli], a
 	ld [hl], a
-	call UpdatePikachuWalkingSprite
+	call UpdateDittoWalkingSprite
 	call Func_fc82e
 	jr c, .skip
 	push bc
 	callab InitializeSpriteScreenPosition
 	pop bc
 .skip
-	ld hl, wPikachuMovementStatus - wPikachuSpriteStateData1
+	ld hl, wDittoMovementStatus - wDittoSpriteStateData1
 	add hl, bc
 	ld [hl], $1
-	ld hl, wPikachuWalkAnimationCounter - wPikachuSpriteStateData1
+	ld hl, wDittoWalkAnimationCounter - wDittoSpriteStateData1
 	add hl, bc
 	ld [hl], $0
-	call RefreshPikachuFollow
+	call RefreshDittoFollow
 	ret
 
 Func_fc793:
-	call RefreshPikachuFollow
+	call RefreshDittoFollow
 	push bc
 	callab InitializeSpriteScreenPosition
 	pop bc
-	ld hl, wPikachuSpriteImageIdx - wPikachuSpriteStateData1
+	ld hl, wDittoSpriteImageIdx - wDittoSpriteStateData1
 	add hl, bc
 	ld [hl], $ff
 	dec hl
@@ -495,12 +495,12 @@ Func_fc7aa:
 	ld e, l
 	ld a, [de]
 	inc de
-	ld hl, wPikachuFacingDirection - wPikachuSpriteStateData1
+	ld hl, wDittoFacingDirection - wDittoSpriteStateData1
 	add hl, bc
 	ld [hl], a
 	ld a, [de]
 	inc de
-	ld hl, wPikachuXStepVector - wPikachuSpriteStateData1
+	ld hl, wDittoXStepVector - wDittoSpriteStateData1
 	add hl, bc
 	ld [hl], a
 	dec hl
@@ -509,14 +509,14 @@ Func_fc7aa:
 	ld [hl], a
 	inc de
 	ld a, [de]
-	ld hl, wPikachuMovementStatus - wPikachuSpriteStateData1
+	ld hl, wDittoMovementStatus - wDittoSpriteStateData1
 	add hl, bc
 	ld [hl], a
 	cp $4
 	jp z, Func_fca0a
-	call AreThereAtLeastTwoStepsInPikachuFollowCommandBuffer
-	jp c, FastPikachuFollow
-	jp NormalPikachuFollow
+	call AreThereAtLeastTwoStepsInDittoFollowCommandBuffer
+	jp c, FastDittoFollow
+	jp NormalDittoFollow
 
 Pointer_fc7e3:
 	db  0,  0
@@ -539,28 +539,28 @@ Pointer_fc7e3:
 Func_fc803:
 	call Func_fcae2
 	ret c
-	ld hl, wPikachuWalkAnimationCounter - wPikachuSpriteStateData1
+	ld hl, wDittoWalkAnimationCounter - wDittoSpriteStateData1
 	add hl, bc
 	dec [hl]
 	jr nz, .asm_fc823
 	push hl
-	call GetPikachuFollowCommand
+	call GetDittoFollowCommand
 	pop hl
 	cp $5
 	jr nc, Func_fc842
 	ld [hl], $20
 	call Random
 	and $c
-	ld hl, wPikachuFacingDirection - wPikachuSpriteStateData1
+	ld hl, wDittoFacingDirection - wDittoSpriteStateData1
 	add hl, bc
 	ld [hl], a
 .asm_fc823
 	xor a
-	ld hl, wPikachuIntraAnimFrameCounter - wPikachuSpriteStateData1
+	ld hl, wDittoIntraAnimFrameCounter - wDittoSpriteStateData1
 	add hl, bc
 	ld [hli], a
 	ld [hl], a
-	call UpdatePikachuWalkingSprite
+	call UpdateDittoWalkingSprite
 	ret
 
 Func_fc82e:
@@ -571,10 +571,10 @@ Func_fc82e:
 	ret
 
 Func_fc835:
-	ld hl, wPikachuWalkAnimationCounter - wPikachuSpriteStateData1
+	ld hl, wDittoWalkAnimationCounter - wDittoSpriteStateData1
 	add hl, bc
 	ld [hl], $10
-	ld hl, wPikachuMovementStatus - wPikachuSpriteStateData1
+	ld hl, wDittoMovementStatus - wDittoSpriteStateData1
 	add hl, bc
 	ld [hl], $1
 	ret
@@ -607,16 +607,16 @@ Func_fc862:
 	add a
 	add a
 	and $c
-	ld hl, wPikachuFacingDirection - wPikachuSpriteStateData1
+	ld hl, wDittoFacingDirection - wDittoSpriteStateData1
 	add hl, bc
 	ld [hl], a
-	ld hl, wPikachuMovementStatus - wPikachuSpriteStateData1
+	ld hl, wDittoMovementStatus - wDittoSpriteStateData1
 	add hl, bc
 	ld [hl], $6
 	xor a
 	ld [wd432], a
 	ld [wd433], a
-	ld hl, wPikachuWalkAnimationCounter - wPikachuSpriteStateData1
+	ld hl, wDittoWalkAnimationCounter - wDittoSpriteStateData1
 	add hl, bc
 	ld [hl], $11
 asm_fc87f:
@@ -626,8 +626,8 @@ asm_fc87f:
 	ld d, a
 	call Func_fc82e
 	jr c, Func_fc8c7
-	call SetPikachuOverworldStateFlag2
-	ld hl, wPikachuYPixels - wPikachuSpriteStateData1
+	call SetDittoOverworldStateFlag2
+	ld hl, wDittoYPixels - wDittoSpriteStateData1
 	add hl, bc
 	ld a, [hl]
 	sub e
@@ -637,7 +637,7 @@ asm_fc87f:
 	ld a, [hl]
 	sub d
 	ld d, a
-	ld hl, wPikachuWalkAnimationCounter - wPikachuSpriteStateData1
+	ld hl, wDittoWalkAnimationCounter - wDittoSpriteStateData1
 	add hl, bc
 	ld a, [hl]
 	dec a
@@ -655,20 +655,20 @@ asm_fc87f:
 	ld [wd433], a
 	add d
 	ld d, a
-	ld hl, wPikachuYPixels - wPikachuSpriteStateData1
+	ld hl, wDittoYPixels - wDittoSpriteStateData1
 	add hl, bc
 	ld [hl], e
 	inc hl
 	inc hl
 	ld [hl], d
-	ld hl, wPikachuWalkAnimationCounter - wPikachuSpriteStateData1
+	ld hl, wDittoWalkAnimationCounter - wDittoSpriteStateData1
 	add hl, bc
 	dec [hl]
 	ret nz
 	jp Func_fc835
 
 Func_fc8c7:
-	ld hl, wPikachuYPixels - wPikachuSpriteStateData1
+	ld hl, wDittoYPixels - wDittoSpriteStateData1
 	add hl, bc
 	ld a, [hl]
 	sub e
@@ -700,17 +700,17 @@ Pointer_fc8d6:
 	db  0,  0
 
 Func_fc8f8:
-	ld hl, wPikachuMovementStatus - wPikachuSpriteStateData1
+	ld hl, wDittoMovementStatus - wDittoSpriteStateData1
 	add hl, bc
 	ld [hl], $7
-	ld hl, wPikachuWalkAnimationCounter - wPikachuSpriteStateData1
+	ld hl, wDittoWalkAnimationCounter - wDittoSpriteStateData1
 	add hl, bc
 	ld [hl], $30
 asm_fc904:
 	call Func_fc82e
 	jp c, Func_fc835
-	call SetPikachuOverworldStateFlag2
-	ld hl, wPikachuIntraAnimFrameCounter - wPikachuSpriteStateData1
+	call SetDittoOverworldStateFlag2
+	ld hl, wDittoIntraAnimFrameCounter - wDittoSpriteStateData1
 	add hl, bc
 	ld a, [hl]
 	inc a
@@ -724,25 +724,25 @@ asm_fc904:
 	and %11
 	ld [hl], a
 .asm_fc91f
-	call UpdatePikachuWalkingSprite
-	ld hl, wPikachuWalkAnimationCounter - wPikachuSpriteStateData1
+	call UpdateDittoWalkingSprite
+	ld hl, wDittoWalkAnimationCounter - wDittoSpriteStateData1
 	add hl, bc
 	dec [hl]
 	ret nz
 	jp Func_fc835
 
 Func_fc92b:
-	ld hl, wPikachuWalkAnimationCounter - wPikachuSpriteStateData1
+	ld hl, wDittoWalkAnimationCounter - wDittoSpriteStateData1
 	add hl, bc
 	ld [hl], $20
-	ld hl, wPikachuMovementStatus - wPikachuSpriteStateData1
+	ld hl, wDittoMovementStatus - wDittoSpriteStateData1
 	add hl, bc
 	ld [hl], $8
 asm_fc937:
 	call Func_fc82e
 	jp c, Func_fc835
-	call SetPikachuOverworldStateFlag2
-	ld hl, wPikachuIntraAnimFrameCounter - wPikachuSpriteStateData1
+	call SetDittoOverworldStateFlag2
+	ld hl, wDittoIntraAnimFrameCounter - wDittoSpriteStateData1
 	add hl, bc
 	ld a, [hl]
 	inc a
@@ -755,25 +755,25 @@ asm_fc937:
 	xor $1
 	ld [hl], a
 .asm_fc951
-	call UpdatePikachuWalkingSprite
-	ld hl, wPikachuWalkAnimationCounter - wPikachuSpriteStateData1
+	call UpdateDittoWalkingSprite
+	ld hl, wDittoWalkAnimationCounter - wDittoSpriteStateData1
 	add hl, bc
 	dec [hl]
 	ret nz
 	jp Func_fc835
 
 Func_fc95d:
-	ld hl, wPikachuWalkAnimationCounter - wPikachuSpriteStateData1
+	ld hl, wDittoWalkAnimationCounter - wDittoSpriteStateData1
 	add hl, bc
 	ld [hl], $20
-	ld hl, wPikachuMovementStatus - wPikachuSpriteStateData1
+	ld hl, wDittoMovementStatus - wDittoSpriteStateData1
 	add hl, bc
 	ld [hl], $9
 asm_fc969:
 	call Func_fc82e
 	jp c, Func_fc835
-	call SetPikachuOverworldStateFlag2
-	ld hl, wPikachuIntraAnimFrameCounter - wPikachuSpriteStateData1
+	call SetDittoOverworldStateFlag2
+	ld hl, wDittoIntraAnimFrameCounter - wDittoSpriteStateData1
 	add hl, bc
 	ld a, [hl]
 	inc a
@@ -782,14 +782,14 @@ asm_fc969:
 	jr nz, .skip
 	xor a
 	ld [hl], a
-	ld hl, wPikachuFacingDirection - wPikachuSpriteStateData1
+	ld hl, wDittoFacingDirection - wDittoSpriteStateData1
 	add hl, bc
 	ld a, [hl]
 	call .TurnClockwise
 	ld [hl], a
 .skip
-	call UpdatePikachuWalkingSprite
-	ld hl, wPikachuWalkAnimationCounter - wPikachuSpriteStateData1
+	call UpdateDittoWalkingSprite
+	ld hl, wDittoWalkAnimationCounter - wDittoSpriteStateData1
 	add hl, bc
 	dec [hl]
 	ret nz
@@ -824,84 +824,84 @@ asm_fc969:
 	db SPRITE_FACING_DOWN, SPRITE_FACING_LEFT, SPRITE_FACING_UP, SPRITE_FACING_RIGHT
 .Facings_End:
 
-NormalPikachuFollow:
-	ld hl, wPikachuWalkAnimationCounter - wPikachuSpriteStateData1
+NormalDittoFollow:
+	ld hl, wDittoWalkAnimationCounter - wDittoSpriteStateData1
 	add hl, bc
 	ld [hl], $8
-	ld hl, wPikachuMovementStatus - wPikachuSpriteStateData1
+	ld hl, wDittoMovementStatus - wDittoSpriteStateData1
 	add hl, bc
 	ld [hl], $3
-	call AddPikachuStepVector
+	call AddDittoStepVector
 asm_fc9c3:
-	call TryDoubleAddPikachuStepVectorToScreenPixelCoords
-	call GetPikachuWalkingAnimationSpeed
-	call UpdatePikachuWalkingSprite
-	ld hl, wPikachuWalkAnimationCounter - wPikachuSpriteStateData1
+	call TryDoubleAddDittoStepVectorToScreenPixelCoords
+	call GetDittoWalkingAnimationSpeed
+	call UpdateDittoWalkingSprite
+	ld hl, wDittoWalkAnimationCounter - wDittoSpriteStateData1
 	add hl, bc
 	dec [hl]
 	ret nz
-	call ResetPikachuStepVector
-	call ComputePikachuFacingDirection
-	ld hl, wPikachuMovementStatus - wPikachuSpriteStateData1
+	call ResetDittoStepVector
+	call ComputeDittoFacingDirection
+	ld hl, wDittoMovementStatus - wDittoSpriteStateData1
 	add hl, bc
 	ld [hl], $1
 	ret
 
-FastPikachuFollow:
-	ld hl, wPikachuWalkAnimationCounter - wPikachuSpriteStateData1
+FastDittoFollow:
+	ld hl, wDittoWalkAnimationCounter - wDittoSpriteStateData1
 	add hl, bc
 	ld [hl], $4
-	ld hl, wPikachuMovementStatus - wPikachuSpriteStateData1
+	ld hl, wDittoMovementStatus - wDittoSpriteStateData1
 	add hl, bc
 	ld [hl], $5
-	call AddPikachuStepVector
+	call AddDittoStepVector
 asm_fc9ee:
-	call DoubleAddPikachuStepVectorToScreenPixelCoords
-	call GetPikachuWalkingAnimationSpeed
-	call UpdatePikachuWalkingSprite
-	ld hl, wPikachuWalkAnimationCounter - wPikachuSpriteStateData1
+	call DoubleAddDittoStepVectorToScreenPixelCoords
+	call GetDittoWalkingAnimationSpeed
+	call UpdateDittoWalkingSprite
+	ld hl, wDittoWalkAnimationCounter - wDittoSpriteStateData1
 	add hl, bc
 	dec [hl]
 	ret nz
-	call ResetPikachuStepVector
-	call ComputePikachuFacingDirection
-	ld hl, wPikachuMovementStatus - wPikachuSpriteStateData1
+	call ResetDittoStepVector
+	call ComputeDittoFacingDirection
+	ld hl, wDittoMovementStatus - wDittoSpriteStateData1
 	add hl, bc
 	ld [hl], $1
 	ret
 
 Func_fca0a:
-	ld hl, wPikachuWalkAnimationCounter - wPikachuSpriteStateData1
+	ld hl, wDittoWalkAnimationCounter - wDittoSpriteStateData1
 	add hl, bc
 	ld [hl], $8
-	ld hl, wPikachuMovementStatus - wPikachuSpriteStateData1
+	ld hl, wDittoMovementStatus - wDittoSpriteStateData1
 	add hl, bc
 	ld [hl], $4
-	call AddPikachuStepVector
-	call AddPikachuStepVector
+	call AddDittoStepVector
+	call AddDittoStepVector
 asm_fca1c:
-	call DoubleAddPikachuStepVectorToScreenPixelCoords
-	call GetPikachuWalkingAnimationSpeed
-	call UpdatePikachuWalkingSprite
-	ld hl, wPikachuWalkAnimationCounter - wPikachuSpriteStateData1
+	call DoubleAddDittoStepVectorToScreenPixelCoords
+	call GetDittoWalkingAnimationSpeed
+	call UpdateDittoWalkingSprite
+	ld hl, wDittoWalkAnimationCounter - wDittoSpriteStateData1
 	add hl, bc
 	dec [hl]
 	ret nz
-	call ResetPikachuStepVector
-	call ComputePikachuFacingDirection
-	ld hl, wPikachuMovementStatus - wPikachuSpriteStateData1
+	call ResetDittoStepVector
+	call ComputeDittoFacingDirection
+	ld hl, wDittoMovementStatus - wDittoSpriteStateData1
 	add hl, bc
 	ld [hl], $1
 	ret
 
-AddPikachuStepVector:
-	ld hl, wPikachuYStepVector - wPikachuSpriteStateData1
+AddDittoStepVector:
+	ld hl, wDittoYStepVector - wDittoSpriteStateData1
 	add hl, bc
 	ld e, [hl]
 	inc hl
 	inc hl
 	ld d, [hl]
-	ld hl, wPikachuMapY - wPikachuSpriteStateData1
+	ld hl, wDittoMapY - wDittoSpriteStateData1
 	add hl, bc
 	ld a, [hl]
 	add e
@@ -911,15 +911,15 @@ AddPikachuStepVector:
 	ld [hl], a
 	ret
 
-TryDoubleAddPikachuStepVectorToScreenPixelCoords:
+TryDoubleAddDittoStepVectorToScreenPixelCoords:
 	ld a, [wWalkBikeSurfState]
 	cp $1 ; biking
-	jr nz, AddPikachuStepVectorToScreenPixelCoords
+	jr nz, AddDittoStepVectorToScreenPixelCoords
 	ld a, [wd736]
 	bit 6, a
-	jr nz, AddPikachuStepVectorToScreenPixelCoords
-DoubleAddPikachuStepVectorToScreenPixelCoords:
-	ld hl, wPikachuYStepVector - wPikachuSpriteStateData1
+	jr nz, AddDittoStepVectorToScreenPixelCoords
+DoubleAddDittoStepVectorToScreenPixelCoords:
+	ld hl, wDittoYStepVector - wDittoSpriteStateData1
 	add hl, bc
 	ld a, [hli]
 	add a
@@ -933,8 +933,8 @@ DoubleAddPikachuStepVectorToScreenPixelCoords:
 	ld [hl], a
 	ret
 
-AddPikachuStepVectorToScreenPixelCoords:
-	ld hl, wPikachuYStepVector - wPikachuSpriteStateData1
+AddDittoStepVectorToScreenPixelCoords:
+	ld hl, wDittoYStepVector - wDittoSpriteStateData1
 	add hl, bc
 	ld a, [hli]
 	add a
@@ -946,8 +946,8 @@ AddPikachuStepVectorToScreenPixelCoords:
 	ld [hli], a
 	ret
 
-ResetPikachuStepVector:
-	ld hl, wPikachuYStepVector - wPikachuSpriteStateData1
+ResetDittoStepVector:
+	ld hl, wDittoYStepVector - wDittoSpriteStateData1
 	add hl, bc
 	xor a
 	ld [hli], a
@@ -955,13 +955,13 @@ ResetPikachuStepVector:
 	ld [hl], a
 	ret
 
-GetPikachuWalkingAnimationSpeed:
-	call ComparePikachuHappinessTo80
+GetDittoWalkingAnimationSpeed:
+	call CompareDittoHappinessTo80
 	ld d, $2
 	jr nc, .happy
 	ld d, $5
 .happy
-	ld hl, wPikachuIntraAnimFrameCounter - wPikachuSpriteStateData1
+	ld hl, wDittoIntraAnimFrameCounter - wDittoSpriteStateData1
 	add hl, bc
 	ld a, [hl]
 	inc a
@@ -977,11 +977,11 @@ GetPikachuWalkingAnimationSpeed:
 	ld [hl], a
 	ret
 
-UpdatePikachuWalkingSprite:
-	ld a, [wPikachuOverworldStateFlags]
+UpdateDittoWalkingSprite:
+	ld a, [wDittoOverworldStateFlags]
 	bit 3, a
 	jr nz, .uninitialized
-	ld hl, wPikachuSpriteImageBaseOffset - wPikachuSpriteStateData1
+	ld hl, wDittoSpriteImageBaseOffset - wDittoSpriteStateData1
 	add hl, bc
 	ld a, [hl]
 	dec a
@@ -990,7 +990,7 @@ UpdatePikachuWalkingSprite:
 	ld a, [wd736]
 	bit 7, a
 	jr nz, .copy_player
-	ld hl, wPikachuFacingDirection - wPikachuSpriteStateData1
+	ld hl, wDittoFacingDirection - wDittoSpriteStateData1
 	add hl, bc
 	ld a, [hl]
 	or d
@@ -1003,19 +1003,19 @@ UpdatePikachuWalkingSprite:
 	jr .load_sprite_index
 
 .normal_get_sprite_index
-	ld hl, wPikachuAnimFrameCounter - wPikachuSpriteStateData1
+	ld hl, wDittoAnimFrameCounter - wDittoSpriteStateData1
 	add hl, bc
 	ld a, d
 	or [hl]
 	ld d, a
 .load_sprite_index
-	ld hl, wPikachuSpriteImageIdx - wPikachuSpriteStateData1
+	ld hl, wDittoSpriteImageIdx - wDittoSpriteStateData1
 	add hl, bc
 	ld [hl], d
 	ret
 
 .uninitialized
-	ld hl, wPikachuSpriteImageIdx - wPikachuSpriteStateData1
+	ld hl, wDittoSpriteImageIdx - wDittoSpriteStateData1
 	add hl, bc
 	ld [hl], $ff
 	ret
@@ -1024,11 +1024,11 @@ UpdatePikachuWalkingSprite:
 	ld a, [wPlayerSpriteImageIdx]
 	and $f
 	or d
-	ld [wPikachuSpriteImageIdx], a
+	ld [wDittoSpriteImageIdx], a
 	ret
 
 Func_fcae2:
-	ld hl, wPikachuMapY - wPikachuSpriteStateData1
+	ld hl, wDittoMapY - wDittoSpriteStateData1
 	add hl, bc
 	ld a, [wYCoord]
 	add $4
@@ -1039,7 +1039,7 @@ Func_fcae2:
 	add $4
 	cp [hl]
 	jr nz, .on_screen
-	ld hl, wPikachuSpriteImageIdx - wPikachuSpriteStateData1
+	ld hl, wDittoSpriteImageIdx - wDittoSpriteStateData1
 	add hl, bc
 	ld [hl], $ff
 	scf
@@ -1049,11 +1049,11 @@ Func_fcae2:
 	and a
 	ret
 
-IsPikachuRightNextToPlayer:
+IsDittoRightNextToPlayer:
 	push bc
 	push de
 	push hl
-	ld bc, wPikachuPictureID
+	ld bc, wDittoPictureID
 	ld a, [wXCoord]
 	add $4
 	ld d, a
@@ -1107,13 +1107,13 @@ IsPikachuRightNextToPlayer:
 	xor a
 	ret
 
-GetPikachuFacingDirectionAndReturnToE:
-	call GetPikachuFacingDirection
+GetDittoFacingDirectionAndReturnToE:
+	call GetDittoFacingDirection
 	ld e, a
 	ret
 
-GetPikachuFacingDirection:
-	ld bc, wPikachuPictureID
+GetDittoFacingDirection:
+	ld bc, wDittoPictureID
 	ld a, [wXCoord]
 	add $4
 	ld d, a
@@ -1151,9 +1151,9 @@ GetPikachuFacingDirection:
 	ld a, $ff ; standing
 	ret
 
-ClearPikachuFollowCommandBuffer:
+ClearDittoFollowCommandBuffer:
 	push bc
-	ld hl, wPikachuFollowCommandBufferSize
+	ld hl, wDittoFollowCommandBufferSize
 	ld [hl], $ff
 	inc hl
 	ld bc, $10
@@ -1162,25 +1162,25 @@ ClearPikachuFollowCommandBuffer:
 	pop bc
 	ret
 
-AppendPikachuFollowCommandToBuffer:
-	ld hl, wPikachuFollowCommandBufferSize
+AppendDittoFollowCommandToBuffer:
+	ld hl, wDittoFollowCommandBufferSize
 	inc [hl]
 	ld e, [hl]
 	ld d, 0
-	ld hl, wPikachuFollowCommandBuffer
+	ld hl, wDittoFollowCommandBuffer
 	add hl, de
 	ld [hl], a
 	ret
 
-RefreshPikachuFollow:
-	call ClearPikachuFollowCommandBuffer
-	call ComputePikachuFollowCommand
+RefreshDittoFollow:
+	call ClearDittoFollowCommandBuffer
+	call ComputeDittoFollowCommand
 	ret c
-	call AppendPikachuFollowCommandToBuffer
+	call AppendDittoFollowCommandToBuffer
 	ret
 
-ComputePikachuFollowCommand:
-	ld bc, wPikachuPictureID
+ComputeDittoFollowCommand:
+	ld bc, wDittoPictureID
 	ld hl, wPlayerMapY - wPlayerSpriteStateData1
 	add hl, bc
 	ld a, [wYCoord]
@@ -1217,7 +1217,7 @@ ComputePikachuFollowCommand:
 	ld a, [wXCoord]
 	add $4
 	sub [hl]
-	jr z, .pikachuOnTopOfPlayer
+	jr z, .DittoOnTopOfPlayer
 	jr c, .pikaToLeftOfPlayer
 	call CheckAbsoluteValueLessThan2
 	jr c, .return4
@@ -1242,7 +1242,7 @@ ComputePikachuFollowCommand:
 	and a
 	ret
 
-.pikachuOnTopOfPlayer
+.DittoOnTopOfPlayer
 	scf
 	ret
 
@@ -1262,20 +1262,20 @@ Func_fcc08::
 	jr nz, .asm_fcc1b
 	call Func_fcc42
 	ret c
-	call AppendPikachuFollowCommandToBuffer
+	call AppendDittoFollowCommandToBuffer
 	ret
 
 .asm_fcc1b
 	call Func_fcc64
 	ret c
-	call AppendPikachuFollowCommandToBuffer
+	call AppendDittoFollowCommandToBuffer
 	ret
 
 Func_fcc23:
-	ld a, [wPikachuOverworldStateFlags]
+	ld a, [wDittoOverworldStateFlags]
 	bit 5, a
 	jr nz, .asm_fcc40
-	ld a, [wPikachuOverworldStateFlags]
+	ld a, [wDittoOverworldStateFlags]
 	bit 7, a
 	jr nz, .asm_fcc40
 	ld a, [wd472]
@@ -1322,7 +1322,7 @@ Func_fcc42:
 	ret
 
 Func_fcc64:
-	ld hl, wPikachuOverworldStateFlags
+	ld hl, wDittoOverworldStateFlags
 	bit 6, [hl]
 	jr z, .asm_fcc6e
 	res 6, [hl]
@@ -1360,7 +1360,7 @@ Func_fcc64:
 	ret
 
 Func_fcc92:
-	ld hl, wPikachuFollowCommandBufferSize
+	ld hl, wDittoFollowCommandBufferSize
 	ld a, [hl]
 	cp $ff
 	jr z, .asm_fccb0
@@ -1369,7 +1369,7 @@ Func_fcc92:
 	dec [hl]
 	ld e, a
 	ld d, 0
-	ld hl, wPikachuFollowCommandBuffer
+	ld hl, wDittoFollowCommandBuffer
 	add hl, de
 	inc e
 	ld a, $ff
@@ -1386,8 +1386,8 @@ Func_fcc92:
 	scf
 	ret
 
-ComputePikachuFacingDirection::
-	call GetPikachuFollowCommandIfBufferSizeNonzero
+ComputeDittoFacingDirection::
+	call GetDittoFollowCommandIfBufferSizeNonzero
 	and a
 	jr z, .check_y
 	dec a
@@ -1403,7 +1403,7 @@ ComputePikachuFacingDirection::
 	ld a, [wXCoord]
 	add $4
 	ld e, a
-	ld a, [wPikachuMapY]
+	ld a, [wDittoMapY]
 	cp d
 	jr z, .check_x
 	ld a, SPRITE_FACING_DOWN
@@ -1412,7 +1412,7 @@ ComputePikachuFacingDirection::
 	jr .load
 
 .check_x
-	ld a, [wPikachuMapX]
+	ld a, [wDittoMapX]
 	cp e
 	jr z, .copy_from_player
 	ld a, SPRITE_FACING_RIGHT
@@ -1423,17 +1423,17 @@ ComputePikachuFacingDirection::
 .copy_from_player
 	ld a, [wPlayerFacingDirection]
 .load
-	ld [wPikachuFacingDirection], a
+	ld [wDittoFacingDirection], a
 	ret
 
-GetPikachuFollowCommand:
-	ld hl, wPikachuFollowCommandBufferSize
+GetDittoFollowCommand:
+	ld hl, wDittoFollowCommandBufferSize
 	ld a, [hl]
 	cp $ff
 	jr z, .asm_fccff
 	ld e, a
 	ld d, 0
-	ld hl, wPikachuFollowCommandBuffer
+	ld hl, wDittoFollowCommandBuffer
 	add hl, de
 	ld a, [hl]
 	ret
@@ -1442,8 +1442,8 @@ GetPikachuFollowCommand:
 	xor a
 	ret
 
-GetPikachuFollowCommandIfBufferSizeNonzero:
-	ld hl, wPikachuFollowCommandBufferSize
+GetDittoFollowCommandIfBufferSizeNonzero:
+	ld hl, wDittoFollowCommandBufferSize
 	ld a, [hl]
 	cp $ff
 	jr z, .default
@@ -1451,7 +1451,7 @@ GetPikachuFollowCommandIfBufferSizeNonzero:
 	jr z, .default
 	ld e, a
 	ld d, 0
-	ld hl, wPikachuFollowCommandBuffer
+	ld hl, wDittoFollowCommandBuffer
 	add hl, de
 	ld a, [hl]
 	ret
@@ -1460,8 +1460,8 @@ GetPikachuFollowCommandIfBufferSizeNonzero:
 	xor a
 	ret
 
-AreThereAtLeastTwoStepsInPikachuFollowCommandBuffer:
-	ld a, [wPikachuFollowCommandBufferSize]
+AreThereAtLeastTwoStepsInDittoFollowCommandBuffer:
+	ld a, [wDittoFollowCommandBufferSize]
 	cp $ff
 	ret z
 	cp $2
@@ -1473,10 +1473,10 @@ AreThereAtLeastTwoStepsInPikachuFollowCommandBuffer:
 	scf
 	ret
 
-WillPikachuSpawnOnTheScreen:
+WillDittoSpawnOnTheScreen:
 	ld h, wSpriteStateData2 / $100
 	ld a, [H_CURRENTSPRITEOFFSET] ; If we're here, this can only be $f0
-	add wPikachuMapY - wPikachuSpriteStateData2
+	add wDittoMapY - wDittoSpriteStateData2
 	ld l, a
 	ld b, [hl]
 	ld a, [wYCoord]
@@ -1517,7 +1517,7 @@ WillPikachuSpawnOnTheScreen:
 .not_on_screen
 	ld h, wSpriteStateData1 / $100
 	ld a, [H_CURRENTSPRITEOFFSET]
-	add wPikachuSpriteImageIdx - wPikachuSpriteStateData1
+	add wDittoSpriteImageIdx - wDittoSpriteStateData1
 	ld l, a
 	ld [hl], $ff
 	scf
@@ -1526,7 +1526,7 @@ WillPikachuSpawnOnTheScreen:
 .on_screen
 	ld h, wSpriteStateData2 / $100
 	ld a, [H_CURRENTSPRITEOFFSET]
-	add wPikachuGrassPriority - wPikachuSpriteStateData2
+	add wDittoGrassPriority - wDittoSpriteStateData2
 	ld l, a
 	ld a, [wGrassTile]
 	cp e
@@ -1542,7 +1542,7 @@ WillPikachuSpawnOnTheScreen:
 .GetNPCCurrentTile:
 	ld h, wSpriteStateData1 / $100
 	ld a, [H_CURRENTSPRITEOFFSET]
-	add wPikachuYPixels - wPikachuSpriteStateData1
+	add wDittoYPixels - wDittoSpriteStateData1
 	ld l, a
 	ld a, [hli]
 	add $4
@@ -1566,11 +1566,11 @@ WillPikachuSpawnOnTheScreen:
 	add hl, de
 	ret
 
-ComparePikachuHappinessTo80:
+CompareDittoHappinessTo80:
 ; preserves a and bc
 	push bc
 	push af
-	ld a, [wPikachuHappiness]
+	ld a, [wDittoHappiness]
 	cp 80
 	pop bc
 	ld a, b

@@ -7,6 +7,8 @@
 const_value = 0
 
 	const HS_PALLET_TOWN_OAK              ; 00
+	const HS_SECRET_SIGN 				  ; these might need to change
+	const HS_SECRET_DITTO
 	const HS_LYING_OLD_MAN                ; 01
 	const HS_OLD_MAN                      ; 02
 	const HS_MUSEUM_GUY                   ; 03

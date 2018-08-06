@@ -3,9 +3,9 @@ INCLUDE "engine/battle/link_battle_versus_text.asm"
 INCLUDE "engine/battle/unused_stats_functions.asm"
 INCLUDE "engine/battle/scroll_draw_trainer_pic.asm"
 
-; might not need this if i can just copy over the pikachu bit to another file
+; might not need this if i can just copy over the Ditto bit to another file
 
-StarterPikachuBattleEntranceAnimation:
+StarterDittoBattleEntranceAnimation:
 	coord hl, 0, 5
 	ld c, 0
 .loop1
@@ -55,36 +55,36 @@ StarterPikachuBattleEntranceAnimation:
 
 INCLUDE "engine/battle/decrement_pp.asm"
 
-ModifyPikachuHappiness::
+ModifyDittoHappiness::
 	ld a, d
 	cp PIKAHAPPY_GYMLEADER
 	jr z, .checkanywhereinparty
 	cp PIKAHAPPY_WALKING
 	jr z, .checkanywhereinparty
 	push de
-	callab IsThisPartymonStarterPikachu_Party
+	callab IsThisPartymonStarterDitto_Party
 	pop de
 	ret nc
 	jr .proceed
 
 .checkanywhereinparty
 	push de
-	callab IsStarterPikachuInOurParty
+	callab IsStarterDittoInOurParty
 	pop de
 	ret nc
 
 .proceed
 	push de
-	; Divide [wPikachuHappiness] by 100.  Hold the integer part in e.
+	; Divide [wDittoHappiness] by 100.  Hold the integer part in e.
 	ld e, $0
-	ld a, [wPikachuHappiness]
+	ld a, [wDittoHappiness]
 	cp 100
-	jr c, .wPikachuHappiness_div_100
+	jr c, .wDittoHappiness_div_100
 	inc e
 	cp 200
-	jr c, .wPikachuHappiness_div_100
+	jr c, .wDittoHappiness_div_100
 	inc e
-.wPikachuHappiness_div_100
+.wDittoHappiness_div_100
 	; Get the (d, e) entry from HappinessChangeTable.
 	ld c, d
 	dec c
@@ -96,11 +96,11 @@ ModifyPikachuHappiness::
 	ld d, $0
 	add hl, de
 	ld a, [hl]
-	; If [hl] is positive, take min(0xff, [hl] + [wPikachuHappiness]).
-	; If [hl] is negative, take max(0x00, [hl] + [wPikachuHappiness]).
+	; If [hl] is positive, take min(0xff, [hl] + [wDittoHappiness]).
+	; If [hl] is negative, take max(0x00, [hl] + [wDittoHappiness]).
 	; Inexplicably, we're using 100 as the threshold for comparison.
 	cp 100
-	ld a, [wPikachuHappiness]
+	ld a, [wDittoHappiness]
 	jr nc, .negative
 	add [hl]
 	jr nc, .okay
@@ -112,21 +112,21 @@ ModifyPikachuHappiness::
 	jr c, .okay
 	xor a
 .okay
-	ld [wPikachuHappiness], a
+	ld [wDittoHappiness], a
 
-	; Restore d and get the d'th entry in PikachuMoods.
+	; Restore d and get the d'th entry in DittoMoods.
 	pop de
 	dec d
-	ld hl, PikachuMoods
+	ld hl, DittoMoods
 	ld e, d
 	ld d, $0
 	add hl, de
 	ld a, [hl]
 	ld b, a
-	; Modify Pikachu's mood
+	; Modify Ditto's mood
 	cp $80
 	jr z, .done
-	ld a, [wPikachuMood]
+	ld a, [wDittoMood]
 	jr c, .decreased
 	cp b
 	jr nc, .done
@@ -140,7 +140,7 @@ ModifyPikachuHappiness::
 	jr c, .done
 .update_mood
 	ld a, b
-	ld [wPikachuMood], a
+	ld [wDittoMood], a
 .done
 	ret
 
@@ -159,7 +159,7 @@ HappinessChangeTable:
 	db  -5, -5, -10 ; Unknown (d = 10)
 	db -10, -10, -20 ; Unknown (d = 11)
 
-PikachuMoods:
+DittoMoods:
 	; Increase
 	db $8a           ; Gained a level
 	db $83           ; HP restore
@@ -219,9 +219,9 @@ TitleScreen_PlacePikaSpeechBubble:
 	ld [hl], $65
 	ret
 
-TitleScreen_PlacePikachu:
+TitleScreen_PlaceDitto:
 	coord hl, 4, 8
-	ld de, TitleScreenPikachuTilemap
+	ld de, TitleScreenDittoTilemap
 	lb bc, 9, 12
 	call Bank3D_CopyBox
 	coord hl, 16, 10
@@ -232,13 +232,13 @@ TitleScreen_PlacePikachu:
 	ld [hl], $a7
 	coord hl, 16, 13
 	ld [hl], $b1
-	ld hl, TitleScreenPikachuEyesOAMData
+	ld hl, TitleScreenDittoEyesOAMData
 	ld de, wOAMBuffer
 	ld bc, $20
 	call CopyData
 	ret
 
-TitleScreenPikachuEyesOAMData:
+TitleScreenDittoEyesOAMData:
 	db $60, $40, $f1, $22
 	db $60, $48, $f0, $22
 	db $68, $40, $f3, $22
@@ -288,7 +288,7 @@ TitleScreenPikaBubbleTilemap:
 	db $57, $58, $59, $5a, $5b, $5c, $5d
 	db $6d, $5e, $5f, $60, $61, $62, $63
 
-TitleScreenPikachuTilemap:
+TitleScreenDittoTilemap:
 ; 12x9 (xy)
 	db $80, $81, $82, $83, $00, $00, $00, $00, $84, $85, $86, $87
 	db $88, $89, $8a, $8b, $8c, $8d, $8d, $8e, $8f, $8a, $90, $91

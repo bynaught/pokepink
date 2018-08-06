@@ -13,16 +13,33 @@ DisplayPokemonCenterDialogue_:
 	call YesNoChoicePokeCenter ; yes/no menu
 	ld a, [wCurrentMenuItem]
 	and a
-	jr nz, .declinedHealing ; if the player chose No
+	jp nz, .declinedHealing ; if the player chose No
 	call SetLastBlackoutMap
-	call LoadScreenTilesFromBuffer1 ; restore screen
+	callab IsStarterPikachuInOurParty
+	jr nc, .notHealingPlayerPikachu
+	call CheckPikachuFollowingPlayer
+	jr nz, .notHealingPlayerPikachu
+	call LoadCurrentMapView
+	call Delay3
+	call UpdateSprites
+	callab PikachuWalksToNurseJoy ; todo
+.notHealingPlayerPikachu
 	ld hl, NeedYourPokemonText
 	call PrintText
-	ld a, $18
-	ld [wSpriteStateData1 + $12], a ; make the nurse turn to face the machine
-	call Delay3
-	predef HealParty
+	ld c, 64
+	call DelayFrames
+	call CheckPikachuFollowingPlayer
+	jr nz, .playerPikachuNotOnScreen
+	call DisablePikachuOverworldSpriteDrawing
+	callab IsStarterPikachuInOurParty
+	call c, Func_6eaa
+.playerPikachuNotOnScreen
+	lb bc, 1, 8
+	call Func_6ebb
+	ld c, 30
+	call DelayFrames
 	callba AnimateHealingMachine ; do the healing machine animation
+	predef HealParty
 	xor a
 	ld [wAudioFadeOutControl], a
 	ld a, [wAudioSavedROMBank]
@@ -31,19 +48,69 @@ DisplayPokemonCenterDialogue_:
 	ld [wLastMusicSoundID], a
 	ld [wNewSoundID], a
 	call PlaySound
+	call CheckPikachuFollowingPlayer
+	jr nz, .doNotReturnPikachu
+	callab IsStarterPikachuInOurParty
+	call c, Func_6eaa
+	ld a, $5
+	ld [wPikachuSpawnState], a
+	call EnablePikachuOverworldSpriteDrawing
+.doNotReturnPikachu
+	lb bc, 1, 0
+	call Func_6ebb
 	ld hl, PokemonFightingFitText
 	call PrintText
-	ld a, $14
-	ld [wSpriteStateData1 + $12], a ; make the nurse bow
-	ld c, a
+	callab IsStarterPikachuInOurParty
+	jr nc, .notInParty
+	lb bc, 15, 0
+	call Func_6ebb
+.notInParty
+	call LoadCurrentMapView
+	call Delay3
+	call UpdateSprites
+	callab ReloadWalkingTilePatterns
+	ld a, $1
+	ld [H_SPRITEINDEX], a
+	ld a, $1
+	ld [hSpriteImageIndex], a
+	call SpriteFunc_34a1
+	ld c, 40
 	call DelayFrames
+	call UpdateSprites
+	call LoadFontTilePatterns
 	jr .done
 .declinedHealing
 	call LoadScreenTilesFromBuffer1 ; restore screen
 .done
 	ld hl, PokemonCenterFarewellText
 	call PrintText
-	jp UpdateSprites
+	call UpdateSprites
+	ret
+
+Func_6eaa:
+	ld a, $1
+	ld [H_SPRITEINDEX], a
+	ld a, $4
+	ld [hSpriteImageIndex], a
+	call SpriteFunc_34a1
+	ld c, 64
+	call DelayFrames
+	ret
+
+Func_6ebb:
+	ld a, b
+	ld [H_SPRITEINDEX], a
+	ld a, c
+	ld [hSpriteImageIndex], a
+	push bc
+	call SetSpriteFacingDirectionAndDelay
+	pop bc
+	ld a, b
+	ld [H_SPRITEINDEX], a
+	ld a, c
+	ld [hSpriteImageIndex], a
+	call SpriteFunc_34a1
+	ret
 
 PokemonCenterWelcomeText:
 	TX_FAR _PokemonCenterWelcomeText

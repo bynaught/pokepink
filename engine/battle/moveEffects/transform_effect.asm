@@ -364,6 +364,7 @@ TransformEffect_:
 .drawMoveMenus  ; draw the move selection menu 
 				; TODO: make all of this this an actual loop rather than copy+paste it a bunch of times
     call SaveScreenTilesToBuffer2 ; saving screen state
+	; if I have to, zero $d153-5 
 .drawMoveMenuONE
 	ld hl, wTransformMoveList
     ld a, l

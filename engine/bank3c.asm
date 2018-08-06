@@ -1,54 +1,54 @@
-INCLUDE "engine/pikachu_pcm.asm"
+;INCLUDE "engine/ditto_pcm.asm"
 INCLUDE "engine/overworld/advance_player_sprite.asm"
 
-ResetStatusAndHalveMoneyOnBlackout:
-; Reset player status on blackout.
-	xor a
-	ld [wd435], a
-	xor a ; gamefreak copypasting functions (double xor a)
-	ld [wBattleResult], a
-	ld [wWalkBikeSurfState], a
-	ld [wIsInBattle], a
-	ld [wMapPalOffset], a
-	ld [wNPCMovementScriptFunctionNum], a
-	ld [hJoyHeld], a
-	ld [wNPCMovementScriptPointerTableNum], a
-	ld [wFlags_0xcd60], a
+; ResetStatusAndHalveMoneyOnBlackout:
+; ; Reset player status on blackout.
+; 	xor a
+; 	ld [wd435], a
+; 	xor a ; gamefreak copypasting functions (double xor a)
+; 	ld [wBattleResult], a
+; 	ld [wWalkBikeSurfState], a
+; 	ld [wIsInBattle], a
+; 	ld [wMapPalOffset], a
+; 	ld [wNPCMovementScriptFunctionNum], a
+; 	ld [hJoyHeld], a
+; 	ld [wNPCMovementScriptPointerTableNum], a
+; 	ld [wFlags_0xcd60], a
 
-	ld [hMoney], a
-	ld [hMoney + 1], a
-	ld [hMoney + 2], a
-	call HasEnoughMoney
-	jr c, .lostmoney ; never happens
+; 	ld [hMoney], a
+; 	ld [hMoney + 1], a
+; 	ld [hMoney + 2], a
+; 	call HasEnoughMoney
+; 	jr c, .lostmoney ; never happens
 
-	; Halve the player's money.
-	ld a, [wPlayerMoney]
-	ld [hMoney], a
-	ld a, [wPlayerMoney + 1]
-	ld [hMoney + 1], a
-	ld a, [wPlayerMoney + 2]
-	ld [hMoney + 2], a
-	xor a
-	ld [hDivideBCDDivisor], a
-	ld [hDivideBCDDivisor + 1], a
-	ld a, 2
-	ld [hDivideBCDDivisor + 2], a
-	predef DivideBCDPredef3
-	ld a, [hDivideBCDQuotient]
-	ld [wPlayerMoney], a
-	ld a, [hDivideBCDQuotient + 1]
-	ld [wPlayerMoney + 1], a
-	ld a, [hDivideBCDQuotient + 2]
-	ld [wPlayerMoney + 2], a
+; 	; Halve the player's money.
+; 	ld a, [wPlayerMoney]
+; 	ld [hMoney], a
+; 	ld a, [wPlayerMoney + 1]
+; 	ld [hMoney + 1], a
+; 	ld a, [wPlayerMoney + 2]
+; 	ld [hMoney + 2], a
+; 	xor a
+; 	ld [hDivideBCDDivisor], a
+; 	ld [hDivideBCDDivisor + 1], a
+; 	ld a, 2
+; 	ld [hDivideBCDDivisor + 2], a
+; 	predef DivideBCDPredef3
+; 	ld a, [hDivideBCDQuotient]
+; 	ld [wPlayerMoney], a
+; 	ld a, [hDivideBCDQuotient + 1]
+; 	ld [wPlayerMoney + 1], a
+; 	ld a, [hDivideBCDQuotient + 2]
+; 	ld [wPlayerMoney + 2], a
 
-.lostmoney
-	ld hl, wd732
-	set 2, [hl]
-	res 3, [hl]
-	set 6, [hl]
-	ld a, %11111111
-	ld [wJoyIgnore], a
-	predef_jump HealParty
+; .lostmoney
+; 	ld hl, wd732
+; 	set 2, [hl]
+; 	res 3, [hl]
+; 	set 6, [hl]
+; 	ld a, %11111111
+; 	ld [wJoyIgnore], a
+; 	predef_jump HealParty
 
 SetMapSpecificScriptFlagsOnMapReload:
 	ld a, [wCurMap]
@@ -149,7 +149,7 @@ LoadUnusedBluesHouseMissableObjectData:
 	db $ff
 .End:
 
-TryApplyPikachuMovementData:
+TryApplyDittoMovementData:
 	ld a, [wd472]
 	bit 7, a
 	ret z
@@ -158,7 +158,7 @@ TryApplyPikachuMovementData:
 	ret nz
 	push hl
 	push bc
-	callab GetPikachuFacingDirectionAndReturnToE
+	callab GetDittoFacingDirectionAndReturnToE
 	pop bc
 	pop hl
 	ld a, b
@@ -169,22 +169,22 @@ TryApplyPikachuMovementData:
 	push af
 	ld a, $ff
 	ld [wUpdateSpritesEnabled], a
-	callab LoadPikachuShadowIntoVRAM
+	callab LoadDittoShadowIntoVRAM
 	pop af
 	ld [wUpdateSpritesEnabled], a
 	pop hl
-	call ApplyPikachuMovementData
-	callab RefreshPikachuFollow
+	call ApplyDittoMovementData
+	callab RefreshDittoFollow
 	ret
 
 Pic_f0abf:
-INCBIN "gfx/pikachu/unknown_f0abf.pic"
+INCBIN "gfx/Ditto/unknown_f0abf.pic"
 GFX_f0b64:
-INCBIN "gfx/pikachu/unknown_f0b64.2bpp"
+INCBIN "gfx/Ditto/unknown_f0b64.2bpp"
 Pic_f0cf4:
-INCBIN "gfx/pikachu/unknown_f0cf4.pic"
+INCBIN "gfx/Ditto/unknown_f0cf4.pic"
 GFX_f0d82:
-INCBIN "gfx/pikachu/unknown_f0d82.2bpp"
+INCBIN "gfx/Ditto/unknown_f0d82.2bpp"
 
 PokecenterChanseyText:
 	ld hl, NurseChanseyText

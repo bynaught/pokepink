@@ -1,15 +1,15 @@
-ApplyPikachuMovementData_::
+ApplyDittoMovementData_::
 	ld a, b
-	ld [wPikachuMovementScriptBank], a
+	ld [wDittoMovementScriptBank], a
 	ld a, l
-	ld [wPikachuMovementScriptAddress], a
+	ld [wDittoMovementScriptAddress], a
 	ld a, h
-	ld [wPikachuMovementScriptAddress + 1], a
+	ld [wDittoMovementScriptAddress + 1], a
 	call .SwapSpriteStateData
 .loop
-	call LoadPikachuMovementCommandData
+	call LoadDittoMovementCommandData
 	jr nc, .done
-	call ExecutePikachuMovementCommand
+	call ExecuteDittoMovementCommand
 	jr .loop
 
 .done
@@ -27,12 +27,12 @@ ApplyPikachuMovementData_::
 	push bc
 
 	ld hl, wPlayerSpriteStateData1
-	ld de, wPikachuSpriteStateData1
+	ld de, wDittoSpriteStateData1
 	ld c, $10
 	call .SwapBytes
 
 	ld hl, wPlayerSpriteStateData2
-	ld de, wPikachuSpriteStateData2
+	ld de, wDittoSpriteStateData2
 	ld c, $10
 	call .SwapBytes
 
@@ -54,13 +54,13 @@ ApplyPikachuMovementData_::
 	jr nz, .SwapBytes
 	ret
 
-LoadPikachuMovementCommandData:
-	call GetPikachuMovementScriptByte
+LoadDittoMovementCommandData:
+	call GetDittoMovementScriptByte
 	cp $3f
 	ret z
 	ld c, a
 	ld b, 0
-	ld hl, PikachuMovementDatabase
+	ld hl, DittoMovementDatabase
 	add hl, bc
 	add hl, bc
 	add hl, bc
@@ -70,7 +70,7 @@ LoadPikachuMovementCommandData:
 	ld a, [hli]
 	cp $80
 	jr nz, .no_param
-	call GetPikachuMovementScriptByte
+	call GetDittoMovementScriptByte
 .no_param
 	ld [wCurPikaMovementParam1], a
 	ld a, [hli]
@@ -78,7 +78,7 @@ LoadPikachuMovementCommandData:
 	ld a, [hli]
 	cp $80
 	jr nz, .no_param2
-	call GetPikachuMovementScriptByte
+	call GetDittoMovementScriptByte
 .no_param2
 	ld [wCurPikaMovementParam2], a
 	xor a
@@ -86,26 +86,26 @@ LoadPikachuMovementCommandData:
 	scf
 	ret
 
-ExecutePikachuMovementCommand:
+ExecuteDittoMovementCommand:
 	xor a
-	ld [wPikachuMovementFlags], a
-	ld [wPikachuStepTimer], a
-	ld [wPikachuStepSubtimer], a
+	ld [wDittoMovementFlags], a
+	ld [wDittoStepTimer], a
+	ld [wDittoStepSubtimer], a
 	ld a, [wPlayerGrassPriority]
 	push af
 .loop
-	ld bc, wPlayerSpriteStateData1 ; Currently holds Pikachu's sprite state data
+	ld bc, wPlayerSpriteStateData1 ; Currently holds Ditto's sprite state data
 	ld a, [wCurPikaMovementFunc1]
 	ld hl, PikaMovementFunc1Jumptable
 	call .JumpTable
 	ld a, [wCurPikaMovementFunc2]
 	ld hl, PikaMovementFunc2Jumptable
 	call .JumpTable
-	call GetCoordsForPikachuShadow
-	call AnimatePikachuShadow
+	call GetCoordsForDittoShadow
+	call AnimateDittoShadow
 	call DelayFrame
 	call DelayFrame
-	ld hl, wPikachuMovementFlags
+	ld hl, wDittoMovementFlags
 	bit 7, [hl]
 	jr z, .loop
 	pop af
@@ -123,26 +123,26 @@ ExecutePikachuMovementCommand:
 	ld l, a
 	jp hl
 
-GetCoordsForPikachuShadow:
+GetCoordsForDittoShadow:
 	ld hl, wPlayerSpriteImageIdx - wPlayerSpriteStateData1
 	add hl, bc
 	ld a, [wCurPikaMovementSpriteImageIdx]
 	ld [hl], a
 	ld a, [wPikaSpriteY]
 	ld d, a
-	ld a, [wPikachuMovementYOffset]
+	ld a, [wDittoMovementYOffset]
 	add d
 	ld hl, wPlayerYPixels - wPlayerSpriteStateData1
 	add hl, bc
 	ld [hl], a
 	ld a, [wPikaSpriteX]
 	ld d, a
-	ld a, [wPikachuMovementXOffset]
+	ld a, [wDittoMovementXOffset]
 	add d
 	ld hl, wPlayerXPixels - wPlayerSpriteStateData1
 	add hl, bc
 	ld [hl], a
-	ld hl, wPikachuMovementFlags
+	ld hl, wDittoMovementFlags
 	bit 6, [hl]
 	ret z
 	ld hl, wPlayerGrassPriority - wPlayerSpriteStateData1
@@ -150,18 +150,18 @@ GetCoordsForPikachuShadow:
 	ld [hl], 0
 	ret
 
-AnimatePikachuShadow:
-	ld hl, wPikachuMovementFlags
+AnimateDittoShadow:
+	ld hl, wDittoMovementFlags
 	bit 6, [hl]
 	res 6, [hl]
 	ld hl, wd736
 	res 6, [hl]
 	ret z
 	set 6, [hl]
-	call LoadPikachuShadowOAMData
+	call LoadDittoShadowOAMData
 	ret
 
-PikachuMovementDatabase:
+DittoMovementDatabase:
 	db $01, 1 - 1, $00, 1 - 1 ; $00 start
 
 	db $03, $80, $01, 1 - 1 ; $01
@@ -237,7 +237,7 @@ PikachuMovementDatabase:
 
 PikaMovementFunc1Jumptable:
 	dw PikaMovementFunc1_EndCommand_ ; 00
- 	dw PikaMovementFunc1_LoadPikachuCurrentPosition ; 01
+ 	dw PikaMovementFunc1_LoadDittoCurrentPosition ; 01
  	dw PikaMovementFunc1_DelayFrames ; 02
  	dw PikaMovementFunc1_WalkInCurrentFacingDirection ; 03
  	dw PikaMovementFunc1_WalkInOppositeFacingDirection ; 04
@@ -262,16 +262,16 @@ PikaMovementFunc1Jumptable:
  	dw PikaMovementFunc1_EndCommand_ ; 17
 
 PikaMovementFunc1_EndCommand:
-	ld a, [wPikachuMovementFlags]
+	ld a, [wDittoMovementFlags]
 	set 7, a
-	ld [wPikachuMovementFlags], a
+	ld [wDittoMovementFlags], a
 	ret
 
 PikaMovementFunc1_EndCommand_:
 	call PikaMovementFunc1_EndCommand
 	ret
 
-PikaMovementFunc1_LoadPikachuCurrentPosition:
+PikaMovementFunc1_LoadDittoCurrentPosition:
 	ld hl, wPlayerYPixels - wPlayerSpriteStateData1
 	add hl, bc
 	ld a, [hl]
@@ -281,28 +281,28 @@ PikaMovementFunc1_LoadPikachuCurrentPosition:
 	ld a, [hl]
 	ld [wPikaSpriteX], a
 	xor a
-	ld [wPikachuMovementYOffset], a
-	ld [wPikachuMovementXOffset], a
+	ld [wDittoMovementYOffset], a
+	ld [wDittoMovementXOffset], a
 	call PikaMovementFunc1_EndCommand
 	ret
 
 PikaMovementFunc1_DelayFrames:
-	call CheckPikachuStepTimer1
+	call CheckDittoStepTimer1
 	ret nz
 	call PikaMovementFunc1_EndCommand
 	ret
 
 PikaMovementFunc1_WalkInCurrentFacingDirection:
-	call GetPikachuFacing
+	call GetDittoFacing
 	jr PikaMovementFunc1_ApplyStepVector
 
 PikaMovementFunc1_WalkInOppositeFacingDirection:
-	call GetPikachuFacing
+	call GetDittoFacing
 	xor %100
 	jr PikaMovementFunc1_ApplyStepVector
 
 PikaMovementFunc1_StepTurningCounterclockwise:
-	call GetPikachuFacing
+	call GetDittoFacing
 	ld hl, .Data
 	call PikaMovementFunc1_GetNextFacing
 	jr PikaMovementFunc1_ApplyStepVector
@@ -315,7 +315,7 @@ PikaMovementFunc1_StepTurningCounterclockwise:
 	db $ff
 
 PikaMovementFunc1_StepTurningClockwise:
-	call GetPikachuFacing
+	call GetDittoFacing
 	ld hl, .Data
 	call PikaMovementFunc1_GetNextFacing
 	jr PikaMovementFunc1_ApplyStepVector
@@ -328,7 +328,7 @@ PikaMovementFunc1_StepTurningClockwise:
 	db $ff
 
 PikaMovementFunc1_StepForwardLeft:
-	call GetPikachuFacing
+	call GetDittoFacing
 	ld hl, .Data
 	call PikaMovementFunc1_GetNextFacing
 	jr PikaMovementFunc1_ApplyStepVector
@@ -340,7 +340,7 @@ PikaMovementFunc1_StepForwardLeft:
 	db SPRITE_FACING_RIGHT, PIKASTEPDIR_UP_RIGHT << 2
 
 PikaMovementFunc1_StepForwardRight:
-	call GetPikachuFacing
+	call GetDittoFacing
 	ld hl, .Data
 	call PikaMovementFunc1_GetNextFacing
 	jr PikaMovementFunc1_ApplyStepVector
@@ -352,7 +352,7 @@ PikaMovementFunc1_StepForwardRight:
 	db SPRITE_FACING_RIGHT, PIKASTEPDIR_DOWN_RIGHT << 2
 
 PikaMovementFunc1_StepBackwardLeft:
-	call GetPikachuFacing
+	call GetDittoFacing
 	ld hl, .Data
 	call PikaMovementFunc1_GetNextFacing
 	jr PikaMovementFunc1_ApplyStepVector
@@ -364,7 +364,7 @@ PikaMovementFunc1_StepBackwardLeft:
 	db SPRITE_FACING_RIGHT, PIKASTEPDIR_UP_LEFT << 2
 
 PikaMovementFunc1_StepBackwardRight:
-	call GetPikachuFacing
+	call GetDittoFacing
 	ld hl, .Data
 	call PikaMovementFunc1_GetNextFacing
 	jr PikaMovementFunc1_ApplyStepVector
@@ -380,10 +380,10 @@ PikaMovementFunc1_ApplyStepVector:
 	rrca
 	and $7
 	ld e, a
-	call GetPikachuStepVectorMagnitude
+	call GetDittoStepVectorMagnitude
 	ld d, a
-	call UpdatePikachuPosition
-	call CheckPikachuStepTimer1
+	call UpdateDittoPosition
+	call CheckDittoStepTimer1
 	ret nz
 	call PikaMovementFunc1_EndCommand
 	ret
@@ -441,17 +441,17 @@ PikaMovementFunc1_MoveUpRight:
 
 PikaMovementFunc1_ApplyFacingAndMove:
 	ld e, a
-	call SetPikachuFacing
+	call SetDittoFacing
 PikaMovementFunc1_MoveDiagonally:
-	call GetPikachuStepVectorMagnitude
+	call GetDittoStepVectorMagnitude
 	ld d, a
 	push de
-	call UpdatePikachuPosition
+	call UpdateDittoPosition
 	pop de
-	call CheckPikachuStepTimer1
+	call CheckDittoStepTimer1
 	ret nz
 	ld a, e
-	call ApplyPikachuStepVector
+	call ApplyDittoStepVector
 	call PikaMovementFunc1_EndCommand
 	ret
 
@@ -472,11 +472,11 @@ PikaMovementFunc1_LookRight:
 	jr PikaMovementFunc1_ApplyFacing
 
 PikaMovementFunc1_ApplyFacing:
-	call SetPikachuFacing
+	call SetDittoFacing
 	call PikaMovementFunc1_EndCommand
 	ret
 
-UpdatePikachuPosition:
+UpdateDittoPosition:
 	push de
 	ld d, 0
 	ld hl, .Jumptable
@@ -572,7 +572,7 @@ PikaMovementFunc2Jumptable:
 	dw PikaMovementFunc2_nop ; 10
 
 PikaMovement_SetSpawnShadow:
-	ld hl, wPikachuMovementFlags
+	ld hl, wDittoMovementFlags
 	set 6, [hl]
 	ret
 
@@ -584,7 +584,7 @@ PikaMovementFunc2_ResetFrameCounterAndFaceCurrent:
 	ld [hl], a
 	call PikaMovementFunc2_GetImageBaseOffset
 	ld d, a
-	call GetPikachuFacing
+	call GetDittoFacing
 	or d
 	ld [wCurPikaMovementSpriteImageIdx], a
 	ret
@@ -603,7 +603,7 @@ PikaMovementFunc2_CopySpriteImageIdxDirectionToSpriteImageIdx:
 PikaMovementFunc2_UpdateSpriteImageIdxWithFacing:
 	call PikaMovementFunc2_GetImageBaseOffset
 	ld d, a
-	call GetPikachuFacing
+	call GetDittoFacing
 	or d
 	ld d, a
 	jr PikaMovementFunc2_UpdateSpriteImageIdx
@@ -617,7 +617,7 @@ PikaMovementFunc2_UpdateSpriteImageIdxWithPreviousImageIdxDirection:
 PikaMovementFunc2_UpdateSpriteImageIdx:
 	ld hl, wPlayerAnimFrameCounter - wPlayerSpriteStateData1
 	add hl, bc
-	call CheckPikachuStepTimer2 ; does not preserve hl
+	call CheckDittoStepTimer2 ; does not preserve hl
 	jr nz, .skip
 	inc [hl]
 .skip
@@ -630,7 +630,7 @@ PikaMovementFunc2_UpdateSpriteImageIdx:
 	ret
 
 PikaMovementFunc2_UpdateJumpWithFacing:
-	call GetPikachuFacing
+	call GetDittoFacing
 	ld d, a
 	jr PikaMovementFunc2_UpdateJump
 
@@ -645,20 +645,20 @@ PikaMovementFunc2_UpdateJump:
 	or d
 	ld [wCurPikaMovementSpriteImageIdx], a
 	call PikaMovementFunc_Sine
-	ld [wPikachuMovementYOffset], a
+	ld [wDittoMovementYOffset], a
 	and a
 	ret z
 	call PikaMovement_SetSpawnShadow
 	ret
 
 PikaMovementFunc2_CopyFacingToJump:
-	call GetPikachuFacing
+	call GetDittoFacing
 	ld d, a
 	call PikaMovementFunc2_GetImageBaseOffset
 	or d
 	ld [wCurPikaMovementSpriteImageIdx], a
 	call PikaMovementFunc_Sine
-	ld [wPikachuMovementYOffset], a
+	ld [wDittoMovementYOffset], a
 	ret
 
 PikaMovementFunc2_TurnParameter:
@@ -671,7 +671,7 @@ PikaMovementFunc2_TurnParameter:
 PikaMovementFunc2_TurnClockwise:
 	call PikaMovementFunc2_GetSpriteImageIdxDirection
 	ld d, a
-	call CheckPikachuStepTimer2
+	call CheckDittoStepTimer2
 	jr nz, .skip
 	ld hl, Data_fd731
 .loop
@@ -688,7 +688,7 @@ PikaMovementFunc2_TurnClockwise:
 PikaMovementFunc2_TurnCounterClockwise:
 	call PikaMovementFunc2_GetSpriteImageIdxDirection
 	ld d, a
-	call CheckPikachuStepTimer2
+	call CheckDittoStepTimer2
 	jr nz, .skip
 	ld hl, Data_fd731End
 .loop
@@ -747,7 +747,7 @@ PikaMovementFunc2_GetSpriteImageIdxDirection:
 	pop hl
 	ret
 
-GetPikachuFacing:
+GetDittoFacing:
 	push hl
 	ld hl, wPlayerFacingDirection - wPlayerSpriteStateData1
 	add hl, bc
@@ -756,7 +756,7 @@ GetPikachuFacing:
 	pop hl
 	ret
 
-SetPikachuFacing:
+SetDittoFacing:
 	push hl
 	ld hl, wPlayerFacingDirection - wPlayerSpriteStateData1
 	add hl, bc
@@ -767,8 +767,8 @@ SetPikachuFacing:
 	pop hl
 	ret
 
-CheckPikachuStepTimer1:
-	ld hl, wPikachuStepTimer
+CheckDittoStepTimer1:
+	ld hl, wDittoStepTimer
 	inc [hl]
 	ld a, [wCurPikaMovementParam1]
 	and $1f
@@ -778,7 +778,7 @@ CheckPikachuStepTimer1:
 	ld [hl], 0
 	ret
 
-GetPikachuStepVectorMagnitude:
+GetDittoStepVectorMagnitude:
 	; *XX*****
 	ld a, [wCurPikaMovementParam1]
 	swap a
@@ -787,8 +787,8 @@ GetPikachuStepVectorMagnitude:
 	inc a
 	ret
 
-CheckPikachuStepTimer2:
-	ld hl, wPikachuStepSubtimer
+CheckDittoStepTimer2:
+	ld hl, wDittoStepSubtimer
 	inc [hl]
 	ld a, [wCurPikaMovementParam2]
 	and $f
@@ -800,9 +800,9 @@ CheckPikachuStepTimer2:
 
 PikaMovementFunc_Sine:
 	call .GetArgument
-	ld a, [wPikachuStepSubtimer]
+	ld a, [wDittoStepSubtimer]
 	add e
-	ld [wPikachuStepSubtimer], a
+	ld [wDittoStepSubtimer], a
 	add $20
 	ld e, a
 	push hl
@@ -831,7 +831,7 @@ PikaMovementFunc_Sine:
 	ld e, a
 	ret
 
-ApplyPikachuStepVector:
+ApplyDittoStepVector:
 	push bc
 	ld c, a
 	ld b, 0
@@ -862,7 +862,7 @@ ApplyPikachuStepVector:
 	db -1, -1
 	db  1, -1
 
-LoadPikachuShadowOAMData:
+LoadDittoShadowOAMData:
 	push bc
 	push de
 	push hl
@@ -914,7 +914,7 @@ LoadPikachuShadowOAMData:
 	jr nz, .loop
 	ret
 
-LoadPikachuShadowIntoVRAM:
+LoadDittoShadowIntoVRAM:
 	ld hl, vNPCSprites2 + $7f * $10
 	ld de, LedgeHoppingShadowGFX_3F
 	lb bc, BANK(LedgeHoppingShadowGFX_3F), (LedgeHoppingShadowGFX_3FEnd - LedgeHoppingShadowGFX_3F) / 8
@@ -924,7 +924,7 @@ LedgeHoppingShadowGFX_3F:
 INCBIN "gfx/ledge_hopping_shadow.1bpp"
 LedgeHoppingShadowGFX_3FEnd:
 
-LoadPikachuBallIconIntoVRAM:
+LoadDittoBallIconIntoVRAM:
 	ld hl, vNPCSprites2 + $7e * $10
 	ld de, GFX_fd86b
 	lb bc, BANK(GFX_fd86b), 1
@@ -950,50 +950,50 @@ Func_fd851:
 GFX_fd86b:
 INCBIN "gfx/unknown_fd86b.2bpp"
 
-LoadPikachuSpriteIntoVRAM:
-	ld de, PikachuSprite
-	lb bc, BANK(PikachuSprite), (SandshrewSprite - PikachuSprite) / 32
+LoadDittoSpriteIntoVRAM:
+	ld de, DittoSprite
+	lb bc, BANK(DittoSprite), (SandshrewSprite - DittoSprite) / 32
 	ld hl, vNPCSprites + $c * $10
 	push bc
 	call CopyVideoDataAlternate
-	ld de, PikachuSprite + $c * $10
+	ld de, DittoSprite + $c * $10
 	ld hl, vNPCSprites2 + $c * $10
 	ld a, [h_0xFFFC]
 	and a
 	jr z, .load
-	ld de, PikachuSprite + $c * $10
+	ld de, DittoSprite + $c * $10
 	ld hl, vNPCSprites2 + $4c * $10
 .load
 	pop bc
 	call CopyVideoDataAlternate
-	call LoadPikachuShadowIntoVRAM
-	call LoadPikachuBallIconIntoVRAM
+	call LoadDittoShadowIntoVRAM
+	call LoadDittoBallIconIntoVRAM
 	ret
 
-PikachuPewterPokecenterCheck:
+DittoPewterPokecenterCheck:
 	ld a, [wCurMap]
 	cp PEWTER_POKECENTER
 	ret nz
-	call EnablePikachuFollowingPlayer
-	call StarterPikachuEmotionCommand_turnawayfromplayer
+	call EnableDittoFollowingPlayer
+	call StarterDittoEmotionCommand_turnawayfromplayer
 	ret
 
-PikachuFanClubCheck:
+DittoFanClubCheck:
 	ld a, [wCurMap]
 	cp POKEMON_FAN_CLUB
 	ret nz
-	call EnablePikachuFollowingPlayer
-	call StarterPikachuEmotionCommand_turnawayfromplayer
+	call EnableDittoFollowingPlayer
+	call StarterDittoEmotionCommand_turnawayfromplayer
 	ret
 
-PikachuBillsHouseCheck:
+DittoBillsHouseCheck:
 	ld a, [wCurMap]
 	cp BILLS_HOUSE
 	ret nz
-	call EnablePikachuFollowingPlayer
+	call EnableDittoFollowingPlayer
 	ret
 
-Pikachu_LoadCurrentMapViewUpdateSpritesAndDelay3:
+Ditto_LoadCurrentMapViewUpdateSpritesAndDelay3:
 	call LoadCurrentMapView
 	call UpdateSprites
 	call Delay3
