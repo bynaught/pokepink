@@ -357,13 +357,32 @@ TransformEffect_:
 	call GetMonName
 	ld hl, wEnemyMonUnmodifiedAttack
 	ld de, wPlayerMonUnmodifiedAttack
-	call CopyBasedOnTurn ; original (unmodified) stats
-	call CalculateModifiedStats
+	call .copyBasedOnTurn ; original (unmodified) stats
+	xor a ; battle mon
+	ld [wCalculateWhoseStats], a
+	callab CalculateModifiedStats
+	callab ApplyBurnAndParalysisPenaltiesToPlayer
+	callab ApplyBadgeStatBoosts
+	;callab DrawPlayerHUDAndHPBar
+	;callab PrintEmptyString
 	;ld hl, wEnemyMonStatMods
 	;ld de, wPlayerMonStatMods
 	;call .copyBasedOnTurn ; stat mods - no longer copies these
 	ld hl, TransformedText
 	jp PrintText
+
+.copyBasedOnTurn:
+	ld a, [H_WHOSETURN]
+	and a
+	jr z, .gotStatsOrModsToCopy
+	push hl
+	ld h, d
+	ld l, e
+	pop de
+.gotStatsOrModsToCopy
+	ld bc, $8
+	jp CopyData
+	ret
 
 .dupeSecond
 	ld hl, DupeMoveText
@@ -379,18 +398,7 @@ TransformEffect_:
 	ld hl, PrintButItFailedText_
 	jp BankswitchEtoF
 
-CopyBasedOnTurn:
-	ld a, [H_WHOSETURN]
-	and a
-	jr z, .gotStatsOrModsToCopy
-	push hl
-	ld h, d
-	ld l, e
-	pop de
-.gotStatsOrModsToCopy
-	ld bc, $8
-	jp CopyData
-	ret
+
 
 CheckLearnset:
 	inc hl    ; the following blocks add the enemy's current moves into the list if they aren't already in it. this is for cases such as elite four and gym pokemon that know extra moves

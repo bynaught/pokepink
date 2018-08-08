@@ -84,11 +84,11 @@ _PalletTownText7::
 	done
 
 _PalletTownText8::
-	text "<PLAYER>'s house "
+	text "<PLAYER>'s house"
 	done
 
 _PalletTownText9::
-	text "<RIVAL>'s house "
+	text "<RIVAL>'s house"
 	done
 
 _PalletTownTexta::

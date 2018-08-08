@@ -7,10 +7,10 @@ PalletTownObject:
 	warp 12, 11, 1, OAKS_LAB
 
 	db 4 ; signs
-	sign 13, 13, 6 ; PalletTownText4
-	sign 7, 9, 7 ; PalletTownText5
-	sign 3, 5, 8 ; PalletTownText6
-	sign 11, 5, 9 ; PalletTownText7
+	sign 13, 13, 6 ; PalletTownText6
+	sign 7, 9, 7 ; PalletTownText7
+	sign 3, 5, 8 ; PalletTownText8
+	sign 11, 5, 9 ; PalletTownText9
 
 	db 5 ; objects
 	object SPRITE_OAK, 9, 6, STAY, NONE, 1 ; person
