@@ -171,6 +171,7 @@ PalletTownScript3:
 	ld [wSpriteStateData1 + 9], a   ; this points to sprite facing direction?
 	ld a, PLAYER_DIR_UP 
 	ld [wPlayerMovingDirection], a ; make player face up
+	call UpdateSprites
 	ld a, DITTO
 	call PlayCry
 	call WaitForSoundToFinish

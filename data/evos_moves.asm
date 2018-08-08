@@ -1936,7 +1936,8 @@ GeodudeEvosMoves:
 	db EV_LEVEL, 25, GRAVELER
 	db 0
 ; Learnset
-	db 11, DEFENSE_CURL
+	db 7, DEFENSE_CURL
+	db 11, SHARPEN
 	db 16, ROCK_THROW
 	db 21, SELFDESTRUCT
 	db 26, HARDEN

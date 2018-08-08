@@ -333,12 +333,12 @@ MapHS27:
 MapHS28:
 	db OAKS_LAB,$01,Show
 	db OAKS_LAB,$02,Show
-	db OAKS_LAB,$03,Show
+	;db OAKS_LAB,$03,Show
+	;db OAKS_LAB,$04,Show
+	db OAKS_LAB,$03,Hide
 	db OAKS_LAB,$04,Show
-	db OAKS_LAB,$05,Hide
-	db OAKS_LAB,$06,Show
-	db OAKS_LAB,$07,Show
-	db OAKS_LAB,$08,Hide
+	db OAKS_LAB,$05,Show
+	db OAKS_LAB,$06,Hide
 MapHS2D:
 	db VIRIDIAN_GYM,$01,Show
 	db VIRIDIAN_GYM,$0B,Show

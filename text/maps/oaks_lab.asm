@@ -2,67 +2,36 @@ _OaksLabGaryText1::
 	text "<RIVAL>: Yo"
 	line "<PLAYER>! Gramps"
 	cont "isn't around!"
+
+	para "He said a rare"
+	line "#MON showed up"
+	cont "in town."
+
+	para "He's gone looking"
+	line "for it!"
 	done
 
 _OaksLabText40::
-	text "<RIVAL>: Heh, I"
-	line "don't need to be"
-	cont "greedy like you!"
-
-	para "Go ahead and"
-	line "choose, <PLAYER>!"
+	text "<RIVAL>: Humph!"
+	line "I'll get a better"
+	cont "#MON than you!"
 	done
 
 _OaksLabText41::
-	text "<RIVAL>: My"
+	text "<RIVAL>: Heh, my"
 	line "#MON looks a"
 	cont "lot stronger."
 	done
 
 _OaksLabText39::
-	text "Those are #"
-	line "BALLs. They"
-	cont "contain #MON!"
+	text "That's a #"
+	line "BALL. There's a"
+	cont "#MON inside!"
 	done
 
-_OaksLabCharmanderText::
-	text "So! You want the"
-	line "fire #MON,"
-	cont "CHARMANDER?"
-	done
-
-_OaksLabSquirtleText::
-	text "So! You want the"
-	line "water #MON,"
-	cont "SQUIRTLE?"
-	done
-
-_OaksLabBulbasaurText::
-	text "So! You want the"
-	line "plant #MON,"
-	cont "BULBASAUR?"
-	done
-
-_OaksLabMonEnergeticText::
-	text "This #MON is"
-	line "really energetic!"
-	prompt
-
-_OaksLabReceivedMonText::
-	text "<PLAYER> received"
-	line "a @"
-	TX_RAM wcd6d
-	text "!@@"
-
-_OaksLabLastMonText::
-	text "That's PROF.OAK's"
-	line "last #MON!"
-	done
-
-_OaksLabText_1d2f0::
-	text "OAK: Now, <PLAYER>,"
-	line "which #MON do"
-	cont "you want?"
+_OaksLabPikachuText::
+	text "OAK: Go ahead,"
+	line "it's yours!"
 	done
 
 _OaksLabText_1d2f5::
@@ -70,13 +39,15 @@ _OaksLabText_1d2f5::
 	line "#MON appears,"
 	cont "your #MON can"
 	cont "fight against it!"
+
+	para "Afterward, go on"
+	line "to the next town."
 	done
 
 _OaksLabText_1d2fa::
-	text "OAK: <PLAYER>,"
-	line "raise your young"
-	cont "#MON by making"
-	cont "it fight!"
+	text "OAK: You should"
+	line "talk to it and"
+	cont "see how it feels."
 	done
 
 _OaksLabDeliverParcelText1::
@@ -103,7 +74,11 @@ _OaksLabDeliverParcelText2::
 	para "Ah! This is the"
 	line "custom # BALL"
 	cont "I ordered!"
-	cont "Thank you!"
+	cont "Thanks, <PLAYER>!"
+
+	para "By the way, I must"
+	line "ask you to do"
+	cont "something for me."
 	done
 
 _OaksLabAroundWorldText::
@@ -132,9 +107,10 @@ _OaksLabGivePokeballsText2::
 	line "#MON appears,"
 	cont "it's fair game."
 
-	para "Just throw a #"
-	line "BALL at it and try"
-	line "to catch it!"
+	para "Just like I showed"
+	line "you, throw a #"
+	cont "BALL at it and try"
+	cont "to catch it!"
 
 	para "This won't always"
 	line "work, though."
@@ -188,31 +164,21 @@ _OaksLabRivalWaitingText::
 	done
 
 _OaksLabChooseMonText::
-	text "OAK: <RIVAL>?"
-	line "Let me think..."
+	text "OAK: Hmm? <RIVAL>?"
+	line "Why are you here"
+	cont "already?"
 
-	para "Oh, that's right,"
-	line "I told you to"
-	cont "come! Just wait!"
+	para "I said for you to"
+	line "come by later..."
 
-	para "Here, <PLAYER>!"
+	para "Ah, whatever!"
+	line "Just wait there."
 
-	para "There are 3"
-	line "#MON here!"
+	para "<PLAYER>, Today"
+	line "marks the start"
+	cont "of your #MON"
+	cont "journey."
 
-	para "Haha!"
-
-	para "They are inside"
-	line "the # BALLs."
-
-	para "When I was young,"
-	line "I was a serious"
-	cont "#MON trainer!"
-
-	para "In my old age, I"
-	line "have only 3 left,"
-	cont "but you can have"
-	cont "one! Choose!"
 	done
 
 _OaksLabRivalInterjectionText::
@@ -222,26 +188,73 @@ _OaksLabRivalInterjectionText::
 	done
 
 _OaksLabBePatientText::
-	text "OAK: Be patient!"
-	line "<RIVAL>, you can"
-	cont "have one too!"
+	text "OAK: Be patient,"
+	line "<RIVAL>, and I'll"
+	cont "give you one too."
+
+	para "Do you see that"
+	line "on the table?"
+
+	para "It's called a #"
+	line "BALL. It holds a"
+	cont "#MON inside."
+
 	done
+
+_OaksLabRivalTakesText1::
+	text "<RIVAL>: No way!"
+	line "I want it!"
+
+	prompt
+
+_OaksLabRivalTakesText2::
+	text "<RIVAL> snatched"
+	line "the #MON!@@"
+
+_OaksLabRivalTakesText3::
+	text "OAK: <RIVAL>..."
+	prompt
+
+_OaksLabRivalTakesText4::
+	text "<RIVAL>: Gramps,"
+	line "it's mine, right?"
+	prompt
+
+_OaksLabRivalTakesText5::
+	text "OAK: I was going"
+	line "to give it to you"
+	cont "anyway..."
+
+	para "Yes it's yours,"
+	line "but you should"
+	cont "be more patient."
+	done
+
+_OaksLabOakGivesText::
+	text "OAK: <PLAYER>, I"
+	line "was going to give"
+	cont "you a #MON too."
+	
+	para "But it seems like"
+	line "DITTO is already"
+	cont "your friend!"
+
+	para "You should take"
+	line "DITTO with you"
+	cont "and raise it!"
+
+	prompt
+
+_OaksLabReceivedText::
+	text "<PLAYER> received"
+	line "a @"
+	TX_RAM wcd6d
+	text "!@@"
 
 _OaksLabLeavingText::
 	text "OAK: Hey! Don't go"
 	line "away yet!"
 	done
-
-_OaksLabRivalPickingMonText::
-	text "<RIVAL>: I'll take"
-	line "this one, then!"
-	done
-
-_OaksLabRivalReceivedMonText::
-	text "<RIVAL> received"
-	line "a @"
-	TX_RAM wcd6d
-	text "!@@"
 
 _OaksLabRivalChallengeText::
 	text "<RIVAL>: Wait"
@@ -275,19 +288,48 @@ _OaksLabRivalToughenUpText::
 	line "Smell you later!"
 	done
 
+_OaksLabPikachuDislikesPokeballsText1::
+	text "OAK: What?"
+	done
+
+_OaksLabPikachuDislikesPokeballsText2::
+	text "OAK: Would you"
+	line "look at that!"
+
+	para "It's odd, but it"
+	line "appears that your"
+	cont "PIKACHU dislikes"
+	cont "# BALLs."
+
+	para "You should just"
+	line "keep it with you."
+
+	para "That should make"
+	line "it happy!"
+
+	para "You can talk to it"
+	line "and see how it"
+	cont "feels about you."
+	done
+
 _OaksLabText21::
 	text "<RIVAL>: Gramps!"
 	done
 
 _OaksLabText22::
-	text "<RIVAL>: What did"
-	line "you call me for?"
+	text "<RIVAL>: Gramps,"
+	line "my #MON has"
+	cont "grown stronger!"
+	cont "Check it out!"
 	done
 
 _OaksLabText23::
-	text "OAK: Oh right! I"
-	line "have a request"
-	cont "of you two."
+	text "OAK: Ah, <RIVAL>,"
+	line "good timing!"
+
+	para "I needed to ask"
+	line "both of you to do"
+	cont "something for me."
 	done
 
 _OaksLabText24::
@@ -348,9 +390,8 @@ _OaksLabText27::
 	line "borrow a TOWN MAP"
 	cont "from my sis!"
 
-	para "I'll tell her not"
-	line "to lend you one,"
-	cont "<PLAYER>! Hahaha!"
+	para "You should ask"
+	line "her for one too!"
 	done
 
 _OaksLabText_1d405::
