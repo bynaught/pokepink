@@ -82,8 +82,6 @@ HideSprites::
 
 INCLUDE "home/copy.asm"
 
-
-
 SECTION "Entry", ROM0 [$100]
 
 	nop

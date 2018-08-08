@@ -180,3 +180,4 @@ _PhysicalSpecialSplit:: ;Determines if a move is Physical or Special
 	db PHYSICAL;SLASH        EQU $A3
 	db OTHER_M ;SUBSTITUTE   EQU $A4
 	db PHYSICAL;STRUGGLE     EQU $A5
+	

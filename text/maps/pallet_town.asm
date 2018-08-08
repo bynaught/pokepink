@@ -1,28 +1,39 @@
 _OakAppearsText::
-	text "OAK: Hey! Wait!"
-	line "Don't go out!@@"
+    text "OAK: Oh my!"
+	line ""
+
+	done
 
 _OakWalksUpText::
-	text "OAK: It's unsafe!"
-	line "Wild #MON live"
-	cont "in tall grass!"
+    text "OAK: That #MON"
+	line "is a DITTO."
 
-	para "You need your own"
-	line "#MON for your"
-	cont "protection."
+	para "It seems to be"
+	line "very fond of you!"
 	cont "I know!"
 
 	para "Here, come with"
 	line "me!"
+
+	para "DITTO: !!!"
+
+	para "DITTO lets you"
+	line "pick it up!"
 	done
 
-_PalletTownText2::
-	text "I'm raising"
-	line "#MON too!"
+_DittoJoinText::
+    text "The DITTO lets"
+    line "you pick it up!"
+    done
 
-	para "When they get"
-	line "strong, they can"
-	cont "protect me!"
+_PalletTownText2::
+	text "Was that sign"
+	line "always there in"
+	cont "the grass?"
+
+	para "It's kind of"
+	line "creepy, don't you"
+	cont "think?"
 	done
 
 _PalletTownText3::
@@ -36,20 +47,55 @@ _PalletTownText3::
 	done
 
 _PalletTownText4::
+    text "SIGN: ...."
+	
+	para "This sign wasn't"
+	line "always here..."
+
+	para "SIGN: ..."
+
+	para "SIGN: ......."
+
+	para "....  :)"
+	
+	para "The sign starts"
+    line "to... smile?"
+
+    para "The sign used"
+	line "TRANSFORM!"
+	
+	para ""
+	done
+
+_PalletTownText5::
+    text "It's a #MON!"
+    line ""
+    done
+
+_PalletTownText6::
 	text "OAK #MON"
 	line "RESEARCH LAB"
 	done
 
-_PalletTownText5::
+_PalletTownText7::
 	text "PALLET TOWN"
 	line "Shades of your"
 	cont "journey await!"
 	done
 
-_PalletTownText6::
+_PalletTownText8::
 	text "<PLAYER>'s house "
 	done
 
-_PalletTownText7::
+_PalletTownText9::
 	text "<RIVAL>'s house "
 	done
+
+_PalletTownTexta::
+	text "Wild #MON live"
+	line "in tall grass!"
+
+	para "It's too scary"
+	line "to go without"
+	cont "your own #MON!"
+    done

@@ -3196,7 +3196,6 @@ _DupeMoveText::
 	line "chose that one!"
 	prompt
 
-
 SECTION "Pokedex Text", ROMX, BANK[POKEDEX_TEXT]
 
 INCLUDE "text/pokedex.asm"

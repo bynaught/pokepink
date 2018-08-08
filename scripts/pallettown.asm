@@ -1,4 +1,9 @@
 PalletTownScript:
+    ; CheckEvent EVENT_OAK_APPEARED_IN_PALLET
+    ; jr nz, .next
+    ; ld a, HS_SECRET_SIGN
+	; ld [wMissableObjectIndex], a    ; hide the sign. IT'S YOUR FRIEND NOW
+	; predef ShowObject
 	CheckEvent EVENT_GOT_POKEBALLS_FROM_OAK
 	jr z, .next
 	SetEvent EVENT_PALLET_AFTER_GETTING_POKEBALLS
@@ -20,22 +25,23 @@ PalletTownScriptPointers:
 PalletTownScript0:
 	CheckEvent EVENT_FOLLOWED_OAK_INTO_LAB
 	ret nz
+	ld a, HS_SECRET_SIGN
+	ld [wMissableObjectIndex], a    ; hide the sign. IT'S YOUR FRIEND NOW
+	predef ShowObject
 	ld a, [wYCoord]
 	cp 1 ; is player near north exit?
 	ret nz
 	xor a
-	ld [hJoyHeld], a
-	ld a, PLAYER_DIR_DOWN
-	ld [wPlayerMovingDirection], a
-	ld a, $FF
-	call PlaySound ; stop music
-	ld a, BANK(Music_MeetProfOak)
-	ld c, a
-	ld a, MUSIC_MEET_PROF_OAK ; “oak appears” music
-	call PlayMusic
+	ld [hJoyHeld], a   ; stop movement
+	ld a, PLAYER_DIR_DOWN 
+	ld [wPlayerMovingDirection], a ; make player face down
 	ld a, $FC
-	ld [wJoyIgnore], a
-	SetEvent EVENT_OAK_APPEARED_IN_PALLET
+	ld [wJoyIgnore], a   ; ignore input for now
+	xor a
+	ld [wEmotionBubbleSpriteIndex], a ; player's sprite
+	ld [wWhichEmotionBubble], a ; EXCLAMATION_BUBBLE
+	predef EmotionBubble
+	
 
 
 ; below is the script that spawns rival in oaks lab
@@ -59,9 +65,7 @@ PalletTownScript0:
 ; 	ld [hSpriteIndexOrTextID], a
 ; 	call DisplayTextID
 ; 	call OaksLabScript_1d02b
-; 	ld a, HS_OAKS_LAB_RIVAL
-; 	ld [wMissableObjectIndex], a
-; 	predef ShowObject
+; 	
 ; 	ld a, [wNPCMovementDirections2Index]
 ; 	ld [wSavedNPCMovementDirections2Index], a
 ; 	ld b, 0
@@ -74,6 +78,7 @@ PalletTownScript0:
 ; 	ld [H_SPRITEINDEX], a
 ; 	ld de, wNPCMovementDirections2
 ; 	call MoveSprite
+    
 
 ; 	ld a, $10
 ; 	ld [wOaksLabCurScript], a
@@ -81,36 +86,47 @@ PalletTownScript0:
 
 	; trigger the next script
 	ld a, 1
-	ld [wPalletTownCurScript], a
+	ld [wPalletTownCurScript], a   ; to go script 1 (the value loaded into A)
 	ret
 
 PalletTownScript1:
-	xor a
-	ld [wcf0d], a
-	ld a, 1
-	ld [hSpriteIndexOrTextID], a
-	call DisplayTextID
-	ld a, $FF
-	ld [wJoyIgnore], a
-	ld a, HS_PALLET_TOWN_OAK
-	ld [wMissableObjectIndex], a
-	predef ShowObject
-
-	; trigger the next script
 	ld a, 2
-	ld [wPalletTownCurScript], a
+	ld [wcf0d], a   ; this address is used to decide which oak text to use
+	ld a, 1
+	ld [hSpriteIndexOrTextID], a ; oak speaks to you before leading you to lab text
+	call DisplayTextID
+	;ld a, $FC
+	;ld [wJoyIgnore], a   ; keep ignoring?
+	; don't trigger the next script
+	;ld a, 2
+	;ld [wPalletTownCurScript], a   ; script 2
+	call StartSimulatingJoypadStates
+	ld a, $1
+	ld [wSimulatedJoypadStatesIndex], a
+	ld a, D_DOWN     
+	ld [wSimulatedJoypadStatesEnd], a   ; move downwards 1?
+	xor a
+	ld [wSpriteStateData1 + 9], a  ; player is facing down (0 = down)
+	ld [wJoyIgnore], a     ; stop ignoring directions, start, select
+    ;ld a, [wSimulatedJoypadStatesIndex] not sure if i need these parts
+	;and a
+	;ret nz  ; this makes sure the player can move again?
+	;call Delay3
+	;ld a, 0
+	ld [wPalletTownCurScript], a   ; return to normal at script 0
 	ret
 
-PalletTownScript2:
+PalletTownScript2:        ; this should be usable as is? 
+	SetEvent EVENT_OAK_APPEARED_IN_PALLET
 	ld a, 1
 	ld [H_SPRITEINDEX], a
 	ld a, SPRITE_FACING_UP
 	ld [hSpriteFacingDirection], a
 	call SetSpriteFacingDirectionAndDelay
 	call Delay3
-	ld a, 1
+	ld a, 2
 	ld [wYCoord], a
-	ld a, 1
+	ld a, 2
 	ld [hNPCPlayerRelativePosPerspective], a
 	ld a, 1
 	swap a
@@ -123,27 +139,46 @@ PalletTownScript2:
 	ld a, 1 ; oak
 	ld [H_SPRITEINDEX], a
 	call MoveSprite
-	ld a, $FF
+	ld a, $FC
 	ld [wJoyIgnore], a
 
 	; trigger the next script
 	ld a, 3
 	ld [wPalletTownCurScript], a
+	ld a, 0
+	ld [wcf0d], a   ; this address is used to decide which oak text to use
+	ld a, 1
+	ld [hSpriteIndexOrTextID], a ; oak speaks to you before leading you to lab text
+	call DisplayTextID
 	ret
 
 PalletTownScript3:
 	ld a, [wd730]
 	bit 0, a
 	ret nz
-	xor a ; ld a, SPRITE_FACING_DOWN
-	ld [wSpriteStateData1 + 9], a
+	ld a, $0 ; ld a, SPRITE_FACING_DOWN
+	ld [wSpriteStateData1 + 9], a   ; this points to sprite facing direction?
 	ld a, 1
 	ld [wcf0d], a
-	ld a, $FC
+	ld a, $FC    ; $fc = 11111100, meaning only A and B button - the lowest bits - are available
 	ld [wJoyIgnore], a
 	ld a, 1
-	ld [hSpriteIndexOrTextID], a
+	ld [hSpriteIndexOrTextID], a ; oak speaks to you before leading you to lab text
 	call DisplayTextID
+;	ld hl, DittoJoinText
+;	call PrintText
+	ld a, $04 ; ld a, SPRITE_FACING_UP
+	ld [wSpriteStateData1 + 9], a   ; this points to sprite facing direction?
+	ld a, PLAYER_DIR_UP 
+	ld [wPlayerMovingDirection], a ; make player face up
+	ld a, DITTO
+	call PlayCry
+	call WaitForSoundToFinish
+	ld a, HS_SECRET_DITTO
+	ld [wMissableObjectIndex], a
+	predef HideObject
+	ld a, 60
+	call DelayFrames
 ; set up movement script that causes the player to follow Oak to his lab
 	ld a, $FF
 	ld [wJoyIgnore], a
@@ -199,14 +234,20 @@ PalletTownTextPointers:
 	dw PalletTownText6
 	dw PalletTownText7
 
-PalletTownText1:
+PalletTownText1: ; oak warns (text), then appears, walks up, and then speaks to you
 	TX_ASM
+	ld a, [wcf0d]
+	cp 2
+	jr z, .ditto
 	ld a, [wcf0d]
 	and a
 	jr nz, .next
-	ld a, 1
+	ld a, 0
 	ld [wDoNotWaitForButtonPressAfterDisplayingText], a
 	ld hl, OakAppearsText
+	jr .done
+.ditto
+	ld hl, PalletTownTexta
 	jr .done
 .next
 	ld hl, OakWalksUpText
@@ -214,22 +255,36 @@ PalletTownText1:
 	call PrintText
 	jp TextScriptEnd
 
+;DangerousText:
+;	TX_FAR _DangerousText
+;	db "@"
+;	TX_ASM
+;	ld c, 10
+;	call DelayFrames
+;	xor a
+;	ld [wEmotionBubbleSpriteIndex], a ; player's sprite
+;	ld [wWhichEmotionBubble], a ; EXCLAMATION_BUBBLE
+;	predef EmotionBubble
+;	ld a, PLAYER_DIR_DOWN
+;	ld [wPlayerMovingDirection], a
+;	jp TextScriptEnd
+
 OakAppearsText:
 	TX_FAR _OakAppearsText
-	TX_ASM
-	ld c, 10
-	call DelayFrames
-	xor a
-	ld [wEmotionBubbleSpriteIndex], a ; player's sprite
-	ld [wWhichEmotionBubble], a ; EXCLAMATION_BUBBLE
-	predef EmotionBubble
-	ld a, PLAYER_DIR_DOWN
-	ld [wPlayerMovingDirection], a
-	jp TextScriptEnd
+	db "@"
+
+DittoJoinText:
+	TX_FAR _DittoJoinText
+	db "@"
 
 OakWalksUpText:
 	TX_FAR _OakWalksUpText
 	db "@"
+
+; when you speak to an NPC the index of the sprite is also the index of the 
+; text that it calls - see sprite order here
+; there's no pallettowntext1 because Oak, sprite 1, is hidden
+
 
 PalletTownText2: ; girl
 	TX_FAR _PalletTownText2
@@ -239,18 +294,59 @@ PalletTownText3: ; fat man
 	TX_FAR _PalletTownText3
 	db "@"
 
-PalletTownText4: ; sign by lab
+PalletTownText4: ; secret sign
 	TX_FAR _PalletTownText4
-	db "@"
+	TX_ASM
+	ld c, 3
+	call DelayFrames
+	ld a, $FC
+	ld [wJoyIgnore], a
+	ld a, HS_SECRET_DITTO
+	ld [wMissableObjectIndex], a
+	predef ShowObject
+	ld a, HS_SECRET_SIGN
+	ld [wMissableObjectIndex], a
+	predef HideObject
+	;ld c, 50
+	;call DelayFrames
+	ld hl, PalletTownText5
+	call PrintText
 
-PalletTownText5: ; sign by fence
+	ld a, HS_PALLET_TOWN_OAK
+	ld [wMissableObjectIndex], a
+	predef ShowObject
+
+	; trigger the next script
+	ld a, 2
+	ld [wPalletTownCurScript], a
+	;ret
+	jp TextScriptEnd
+
+PalletTownText5: ; secret ditto
 	TX_FAR _PalletTownText5
 	db "@"
 
-PalletTownText6: ; sign by Red’s house
+PalletTownText6: ; sign by lab
 	TX_FAR _PalletTownText6
 	db "@"
 
-PalletTownText7: ; sign by Blue’s house
+PalletTownText7: ; sign by fence
 	TX_FAR _PalletTownText7
 	db "@"
+
+PalletTownText8: ; sign by Red’s house
+	TX_FAR _PalletTownText8
+	db "@"
+
+PalletTownText9: ; sign by Blue’s house
+	TX_FAR _PalletTownText9
+	db "@"
+
+PalletTownTexta: ; sign by Blue’s house
+	TX_FAR _PalletTownTexta
+	TX_ASM
+	ld c, 10
+	call DelayFrames
+	ld a, PLAYER_DIR_DOWN
+	ld [wPlayerMovingDirection], a
+	jp TextScriptEnd

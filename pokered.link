@@ -21,6 +21,7 @@ ROMX $4
   "NPC Sprites 1" ; NPC_SPRITES_1
   "Graphics" ; GFX
   "Battle (bank 4)"
+  
 
 ROMX $5
   "NPC Sprites 2" ; NPC_SPRITES_2
@@ -155,24 +156,6 @@ ROMX $2B
 
 ROMX $2C
   "Move Names" ; MOVE_NAMES
-
-ROMX $3A
-  "bank3A"
-
-; ROMX $3B
-;   "bank3B"
-
-ROMX $3C
-  "bank3C"
-
-ROMX $3D
-  "bank3D"
-
-ROMX $3E
-  "bank3E"
-
-ROMX $3F
-"bank3F"
 
 WRAM0
   "WRAM Bank 0"

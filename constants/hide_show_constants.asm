@@ -7,8 +7,8 @@
 const_value = 0
 
 	const HS_PALLET_TOWN_OAK              ; 00
-	const HS_SECRET_SIGN 				  ; these might need to change
-	const HS_SECRET_DITTO
+	const HS_SECRET_SIGN             ; 00
+	const HS_SECRET_DITTO              ; 00
 	const HS_LYING_OLD_MAN                ; 01
 	const HS_OLD_MAN                      ; 02
 	const HS_MUSEUM_GUY                   ; 03
@@ -236,3 +236,4 @@ const_value = 0
 	const HS_SEAFOAM_ISLANDS_5_BOULDER_1  ; E1
 	const HS_SEAFOAM_ISLANDS_5_BOULDER_2  ; E2
 	const HS_ARTICUNO                     ; E3 X
+

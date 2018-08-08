@@ -22,3 +22,4 @@ CopyData::
 	or b
 	jr nz, CopyData
 	ret
+	

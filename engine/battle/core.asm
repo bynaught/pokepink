@@ -2989,7 +2989,7 @@ PrintMenuItem:
 	coord hl, 1, 10
 	ld de, DisabledText
 	call PlaceString
-	jr .moveDisabled
+	jp .moveDisabled
 .notDisabled
 	ld hl, wCurrentMenuItem
 	dec [hl]
@@ -4332,7 +4332,7 @@ GetDamageVarsForPlayerAttack:
 	ld b, a
 	ld c, [hl] ; bc = enemy defense
 	ld a, [wEnemyBattleStatus3]
-	bit HasReflectUp, a ; check for Reflect
+	bit HAS_REFLECT_UP, a ; check for Reflect
 	;jr z, .physicalAttackCritCheck
 ; if the enemy has used Reflect, double the enemy's defense
 	sla c
@@ -4363,7 +4363,7 @@ GetDamageVarsForPlayerAttack:
 	ld b, a
 	ld c, [hl] ; bc = enemy special
 	ld a, [wEnemyBattleStatus3]
-	bit HasLightScreenUp, a ; check for Light Screen
+	bit HAS_LIGHT_SCREEN_UP, a ; check for Light Screen
 	;jr z, .specialAttackCritCheck
 ; if the enemy has used Light Screen, double the enemy's special
 	sla c
@@ -4427,6 +4427,13 @@ GetDamageVarsForPlayerAttack:
 	and a
 	ret
 
+CapBCAt1023:
+	ld a, b
+	cp 4
+	ret c
+	lb bc, 3, 255
+	ret
+
 ; sets b, c, d, and e for the CalculateDamage routine in the case of an attack by the enemy mon
 GetDamageVarsForEnemyAttack:
 	ld hl, wDamage ; damage to eventually inflict, initialise to zero
@@ -4448,7 +4455,7 @@ GetDamageVarsForEnemyAttack:
 	ld b, a
 	ld c, [hl] ; bc = player defense
 	ld a, [wPlayerBattleStatus3]
-	bit HasReflectUp, a ; check for Reflect
+	bit HAS_REFLECT_UP, a ; check for Reflect
 	;jr z, .physicalAttackCritCheck
 ; if the player has used Reflect, double the player's defense
 	sla c
@@ -4479,7 +4486,7 @@ GetDamageVarsForEnemyAttack:
 	ld b, a
 	ld c, [hl]
 	ld a, [wPlayerBattleStatus3]
-	bit HasLightScreenUp, a ; check for Light Screen
+	bit HAS_LIGHT_SCREEN_UP, a ; check for Light Screen
 	;jr z, .specialAttackCritCheck
 ; if the player has used Light Screen, double the player's special
 	sla c
@@ -8811,6 +8818,12 @@ PlayBattleAnimationGotID:
 	pop bc
 	pop de
 	pop hl
+	ret
+
+PhysicalSpecialSplit:
+	ld [wTempMoveID], a
+	callba _PhysicalSpecialSplit
+	ld a, [wTempMoveID]
 	ret
 
 ; below is the animation for pokemon without pokeballs from yellow

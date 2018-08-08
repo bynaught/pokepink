@@ -15,8 +15,6 @@ PSYCHIC  EQU $18
 ICE      EQU $19
 DRAGON   EQU $1A
 
-; Below is copied from https://github.com/TheFakeMateo/rpp-backup/
-; credit to TheFakeMateo
 ; These are for the Physical Special split
 PHYSICAL EQU $00
 SPECIAL  EQU $01

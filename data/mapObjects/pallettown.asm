@@ -7,17 +7,17 @@ PalletTownObject:
 	warp 12, 11, 1, OAKS_LAB
 
 	db 4 ; signs
-	sign 13, 13, 4 ; PalletTownText4
-	sign 7, 9, 5 ; PalletTownText5
-	sign 3, 5, 6 ; PalletTownText6
-	sign 11, 5, 7 ; PalletTownText7
-                                
-	db 3 ; objectname, globalindex, X, Y, movement, display, localindex
-	object SPRITE_OAK, 8, 5, STAY, NONE, 1 ; person
+	sign 13, 13, 6 ; PalletTownText4
+	sign 7, 9, 7 ; PalletTownText5
+	sign 3, 5, 8 ; PalletTownText6
+	sign 11, 5, 9 ; PalletTownText7
+
+	db 5 ; objects
+	object SPRITE_OAK, 9, 6, STAY, NONE, 1 ; person
 	object SPRITE_GIRL, 3, 8, WALK, 0, 2 ; person
 	object SPRITE_FISHER2, 11, 14, WALK, 0, 3 ; person
-	object SPRITE_SIGN, 2, 4, STAY, NONE, 4 ; person
-	object SPRITE_DITTO, 2, 4, STAY, NONE, 5 ; person
+	object SPRITE_SIGN, 10, 1, STAY, DOWN, 4 ; sign
+	object SPRITE_DITTO, 10, 1, STAY, DOWN, 5 ; ditto
 
 	; warp-to
 	warp_to 5, 5, PALLET_TOWN_WIDTH ; REDS_HOUSE_1F

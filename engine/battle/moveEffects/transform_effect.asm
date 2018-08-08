@@ -134,8 +134,7 @@ TransformEffect_:
 	ld b, [hl]
 	jp .maxHP
 
-
-.hpCalc ; this is where we calculate our modified hp post-transformation
+.hpCalc
     ld hl, wBattleMonHP
 	ld a, [hli]
 	or [hl]
@@ -256,101 +255,36 @@ TransformEffect_:
 	ld a, c
     ld [wTransformMoveList], a ; store this for now
     ld b, a
-    ld hl, wEnemyMonMoves
+
+    ld hl, wEnemyMonMoves - 1
+	
+
+	call CheckLearnset
+	call CheckLearnset
+	call CheckLearnset
+	call CheckLearnset
 
 
-
-.enemyCurrentlearnset    ; the following three blocks add the enemy's current moves into the list if they aren't already in it. this is for cases such as elite four and gym pokemon that know extra moves
-    ld a, c              ; TODO: make this an actual loop rather than copy+paste it a bunch of times
-    ld b, a
-    ld a, [hl]
-    and a
-    jr z, .finalMoveCount
-.checkDoopLoop
-	ld de, wTransformMoveList + 1
-    ld a, [de]
-    cp [hl] ; compare A (enemy move) to the move in the list
-    jr z, .enemyCurrentlearnsetTWO ; already exists - next move
-    inc de
-    dec b
-    jr nz, .checkDoopLoop ; there are still moves left. keep looping 
-    ; if we get to here, the move is a new one and will be appended
-    ld a, [hl]
-    ld [de], a
-    inc c
-.enemyCurrentlearnsetTWO
-    inc hl
-    ld a, c
-    ld b, a
-    ld a, [hl]
-    and a
-    jr z, .finalMoveCount
-.checkDoopLoopTWO
-	ld de, wTransformMoveList + 1
-    ld a, [de]
-    cp [hl] ; compare A (enemy move) to the move in the list
-    jp z, .enemyCurrentlearnsetTHREE ; already exists - next move
-    inc de
-    dec b
-    jr nz, .checkDoopLoopTWO ; there are still moves left. keep looping 
-    ; if we get to here, the move is a new one and will be appended
-    ld a, [hl]
-    ld [de], a
-    inc c
-.enemyCurrentlearnsetTHREE
-    inc hl
-    ld a, c
-    ld b, a
-    ld a, [hl]
-    and a
-    jr z, .finalMoveCount
-.checkDoopLoopTHREE
-	ld de, wTransformMoveList + 1
-    ld a, [de]
-    cp [hl] ; compare A (enemy move) to the move in the list
-    jp z, .enemyCurrentlearnsetFOUR ; already exists - next move
-    inc de
-    dec b
-    jr nz, .checkDoopLoopTHREE ; there are still moves left. keep looping 
-    ; if we get to here, the move is a new one and will be appended
-    ld a, [hl]
-    ld [de], a
-    inc c
-.enemyCurrentlearnsetFOUR
-    inc hl
-    ld a, c
-    ld b, a
-    ld a, [hl]
-    and a
-    jr z, .finalMoveCount
-.checkDoopLoopFOUR
-	ld de, wTransformMoveList + 1
-    ld a, [de]
-    cp [hl] ; compare A (enemy move) to the move in the list
-    jp z, .finalMoveCount ; already exists - we're done
-    inc de
-    dec b
-    jr nz, .checkDoopLoopFOUR ; there are still moves left. keep looping 
-    ; if we get to here, the move is a new one and will be appended
-    ld a, [hl]
-    ld [de], a
-    inc hl
-    inc c
-	inc de
+;	inc de
 
 .finalMoveCount
 	ld de, wTransformMoveList + 1
+.findEndLoop
+	inc de
     ld a, [de]
-    jr nz, .finalMoveCount ; ; make sure we're at the end of the movelist
+	and a
+    jp nz, .findEndLoop ; ; make sure we're at the end of the movelist
     ld a, c
 	;and a
 	;jp z, .copymovePP
 	cp $04
 	jp c, .collectMoves ; if movelist is less than 4, we already have all of them so skip the menu
-	dec c
+	;dec c
 	ld a, c
 	ld [wTransformMoveList], a
 	ld a, $96 ; put Splash at the bottom. this stops it from glitching and i have no idea why. in the future, change the way the menu draws to chop off the bottom
+	ld [de], a
+	inc de 
 	ld [de], a
 	jp .drawMoveMenus
 
@@ -366,43 +300,16 @@ TransformEffect_:
     call SaveScreenTilesToBuffer2 ; saving screen state
 	; if I have to, zero $d153-5 
 .drawMoveMenuONE
-	ld hl, wTransformMoveList
-    ld a, l
-	ld [wListPointer], a
-	ld a, h
-	ld [wListPointer + 1], a
-	ld a, MOVESLISTMENU ; move ID list menu
-	ld [wListMenuID], a
-	call DisplayListMenuID ; call the menu - do i need anything here that stores input? ; ld a, [wCurrentMenuItem]
-	jp c, .drawMoveMenuONE ; if the player tried to exit the menu, redraw it
-	ld a, [wcf91] ; store selected value (move id) in A
+	call ShowMoveMenu
 	ld [wUnusedD153], a
 .drawMoveMenuTWO
-	ld hl, wTransformMoveList
-    ld a, l
-	ld [wListPointer], a
-	ld a, h
-	ld [wListPointer + 1], a
-	ld a, MOVESLISTMENU ; special non-item, non-pokemon menu. might need my own type
-	ld [wListMenuID], a
-	call DisplayListMenuID ; call the menu - do i need anything here that stores input?
-	jp c, .drawMoveMenuTWO
-    ld a, [wcf91] ; store selected value (move id) in 
+	call ShowMoveMenu
 	ld hl, wUnusedD153
 	cp [hl] ;jp z, .drawMoveMenuTWO
 	jp z, .dupeSecond
 	ld [wUnusedD154], a ; a wUnusedD153 check to prevent duplicates by comparing
 .drawMoveMenuTHREE
-	ld hl, wTransformMoveList
-    ld a, l
-	ld [wListPointer], a
-	ld a, h
-	ld [wListPointer + 1], a
-	ld a, MOVESLISTMENU ; special non-item, non-pokemon menu. might need my own type
-	ld [wListMenuID], a
-	call DisplayListMenuID ; call the menu - do i need anything here that stores input?
-	jp c, .drawMoveMenuTHREE
-	ld a, [wcf91] ; store selected value (move id) in a
+	call ShowMoveMenu
 	ld hl, wUnusedD153
 	cp [hl] ;jp z, .drawMoveMenuTHREE
 	jp z, .dupeThird
@@ -419,30 +326,17 @@ TransformEffect_:
 	inc de
 	call CopyData
 
+	xor a
 	ld hl, wUnusedD153
-	ld a, $00
 	ld [hli], a
 	ld [hli], a
 	ld [hl], a    ; reset chosen move list bytes to zero/ not sure if necessary
-
 	ld hl, wTransformMoveList
-	ld a, $00
+	ld c, $f
+.zeroList
 	ld [hli], a
-	ld [hli], a
-	ld [hli], a
-	ld [hli], a
-	ld [hli], a
-	ld [hli], a
-	ld [hli], a
-	ld [hli], a
-	ld [hli], a
-	ld [hli], a
-	ld [hli], a
-	ld [hli], a
-	ld [hli], a
-	ld [hli], a
-	ld [hli], a
-	ld [hl], a  ; all this does is reset all the move list bytes to 00. not sure if necessary 
+	dec c
+	jr nz, .zeroList
 
 .copymovePP
 	ld de, wBattleMonPP + 1
@@ -451,67 +345,9 @@ TransformEffect_:
 	ld b, $03
 .copyPPLoop ; copies pp values from the moves pointer table
             ; TODO: make this an actual loop rather than copy+paste it a bunch of times
-	ld a, [hli]     ; read move ID
-	and a
-	jp z, .lessThanFourMoves
-	push hl
-	push de
-	dec a
-	ld hl, Moves
-	ld bc, MoveEnd - Moves
-	call AddNTimes
-	ld de, wcd6d
-	ld a, BANK(Moves)
-	call FarCopyData
-	ld a, [wcd6d + 5]
-	pop de
-	ld [de], a
-	inc de
-	pop hl
-	ld a, [hli]     ; read move ID
-	and a
-	jp z, .lessThanFourMoves
-	push hl
-	push de
-	dec a
-	ld hl, Moves
-	ld bc, MoveEnd - Moves
-	call AddNTimes
-	ld de, wcd6d
-	ld a, BANK(Moves)
-	call FarCopyData
-	ld a, [wcd6d + 5]
-	pop de
-	ld [de], a
-	inc de
-	pop hl
-	ld a, [hl]     ; read move ID
-	and a
-	jp z, .lessThanFourMoves
-	inc hl
-	push hl
-	push de
-	dec a
-	ld hl, Moves
-	ld bc, MoveEnd - Moves
-	call AddNTimes
-	ld de, wcd6d
-	ld a, BANK(Moves)
-	call FarCopyData
-	ld a, [wcd6d + 5]
-	pop de
-	ld [de], a
-	pop hl
-	jr .copyStats
-.lessThanFourMoves
-; 0 PP for blank moves
-	xor a
-	ld [de], a
-	inc de
-	inc hl
-	ld a, [hl]
-	and a
-	jr z, .lessThanFourMoves
+	call MovePPCopy
+	call MovePPCopy
+	call MovePPCopy
 
 .copyStats
 ; original (unmodified) stats and stat mods
@@ -522,9 +358,9 @@ TransformEffect_:
 	ld hl, wEnemyMonUnmodifiedAttack
 	ld de, wPlayerMonUnmodifiedAttack
 	call .copyBasedOnTurn ; original (unmodified) stats
-	ld hl, wEnemyMonStatMods
-	ld de, wPlayerMonStatMods
-	call .copyBasedOnTurn ; stat mods
+	;ld hl, wEnemyMonStatMods
+	;ld de, wPlayerMonStatMods
+	;call .copyBasedOnTurn ; stat mods - no longer copies these
 	ld hl, TransformedText
 	jp PrintText
 
@@ -554,6 +390,72 @@ TransformEffect_:
 	ld hl, PrintButItFailedText_
 	jp BankswitchEtoF
 
+CheckLearnset:
+	inc hl    ; the following blocks add the enemy's current moves into the list if they aren't already in it. this is for cases such as elite four and gym pokemon that know extra moves
+    ld a, c              ; TODO: make this an actual loop rather than copy+paste it a bunch of times
+    ld b, a
+    ld a, [hl]
+    and a
+    ret z
+	ld de, wTransformMoveList + 1
+.loopStart
+    ld a, [de]
+    cp [hl] ; compare A (enemy move) to the move in the list
+    ret z ; already exists - next move
+    inc de
+    dec b
+    jr nz, .loopStart ; there are still moves left. keep looping 
+    ; if we get to here, the move is a new one and will be appended
+    ld a, [hl]
+    ld [de], a
+    inc c
+	ret
+
+
+ShowMoveMenu:
+.drawMoveMenu
+	ld hl, wTransformMoveList
+    ld a, l
+	ld [wListPointer], a
+	ld a, h
+	ld [wListPointer + 1], a
+	ld a, MOVESLISTMENU ; move ID list menu
+	ld [wListMenuID], a
+	call DisplayListMenuID ; call the menu - do i need anything here that stores input? ; ld a, [wCurrentMenuItem]
+	jp c, .drawMoveMenu ; if the player tried to exit the menu, redraw it
+	ld a, [wcf91] ; store selected value (move id) in A
+	ret
+
+MovePPCopy:
+	ld a, [hli]     ; read move ID
+	and a
+	jp z, .lessThanFourMoves
+	push hl
+	push de
+	dec a
+	ld hl, Moves
+	ld bc, MoveEnd - Moves
+	call AddNTimes
+	ld de, wcd6d
+	ld a, BANK(Moves)
+	call FarCopyData
+	ld a, [wcd6d + 5]
+	pop de
+	ld [de], a
+	inc de
+	pop hl
+	jr .allDone
+.lessThanFourMoves
+; 0 PP for blank moves
+	xor a
+	ld [de], a
+	inc de
+	inc hl
+	ld a, [hl]
+	and a
+	jr z, .lessThanFourMoves
+.allDone
+	ret
 
 TransformedText:
 	TX_FAR _TransformedText

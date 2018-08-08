@@ -295,67 +295,6 @@ ErasePartyMenuCursors:
 	jr nz, .loop
 	ret
 
-; HM Menu 
-; CheckEvent EVENT_GOT_HM01
-; CheckEvent EVENT_GOT_HM02
-; CheckEvent EVENT_GOT_HM03
-; CheckEvent EVENT_GOT_HM04
-; CheckEvent EVENT_GOT_HM05
-; use these as "licences"
-
-
-; .choseMoves
-; 	call SaveScreenTilesToBuffer1
-; 	ld a, FIELD_MOVE_MON_MENU
-; 	ld [wTextBoxID], a
-; 	call DisplayTextBoxID ; display moves
-; 	ld hl, wFieldMoves
-; 	lb bc, 2, 12 ; max menu item ID, top menu item Y
-; 	ld e, 5
-; .adjustMenuVariablesLoop
-; 	dec e
-; 	jr z, .storeMenuVariables
-; 	ld a, [hli]
-; 	and a ; end of field moves?
-; 	jr z, .storeMenuVariables
-; 	inc b
-; 	dec c
-; 	dec c
-; 	jr .adjustMenuVariablesLoop
-; .storeMenuVariables
-; 	ld hl, wTopMenuItemY
-; 	ld a, c
-; 	ld [hli], a ; top menu item Y
-; 	ld a, [hFieldMoveMonMenuTopMenuItemX]
-; 	ld [hli], a ; top menu item X
-; 	xor a
-; 	ld [hli], a ; current menu item ID
-; 	inc hl
-; 	ld a, b
-; 	ld [hli], a ; max menu item ID
-; 	ld a, A_BUTTON | B_BUTTON
-; 	ld [hli], a ; menu watched keys
-; 	xor a
-; 	ld [hl], a
-; 	call HandleMenuInput
-; 	push af
-; 	call LoadScreenTilesFromBuffer1 ; restore saved screen
-; 	pop af
-; 	bit 1, a ; was the B button pressed?
-; 	jp nz, .loop
-; ; if the B button wasn't pressed
-; 	ld a, [wMaxMenuItem]
-; 	ld b, a
-; 	ld a, [wCurrentMenuItem] ; menu selection
-; 	cp b
-; 	jp z, .exitMenu ; if the player chose Cancel
-; 	ld c, a
-; 	ld b, 0
-; 	ld hl, wFieldMoves
-; 	add hl, bc
-; 	jp .choseOutOfBattleMove
-
-
 ItemMenuLoop:
 	call LoadScreenTilesFromBuffer2DisableBGTransfer ; restore saved screen
 	call RunDefaultPaletteCommand
