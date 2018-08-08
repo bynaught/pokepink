@@ -190,16 +190,16 @@ DisplayIntroNameTextBox:
 IF DEF(_RED)
 DefaultNamesPlayer:
 	db   "NEW NAME"
+	next "PINK"
+	next "MT"
 	next "RED"
-	next "ASH"
-	next "JACK"
 	db   "@"
 
 DefaultNamesRival:
 	db   "NEW NAME"
-	next "BLUE"
+	next "CYAN"
 	next "GARY"
-	next "JOHN"
+	next "BLUE"
 	db   "@"
 ENDC
 
