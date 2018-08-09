@@ -487,9 +487,9 @@ OaksLabScript17:
 	ret
 
 OaksLabScript18:
-	ld a, $1b
-	ld [hSpriteIndexOrTextID], a
-	call DisplayTextID
+	;ld a, $1b
+	;ld [hSpriteIndexOrTextID], a
+	;call DisplayTextID
 	xor a
 	ld [wJoyIgnore], a
 	ld a, $16
@@ -585,8 +585,8 @@ OaksLabScript20:
 	ld [hSpriteIndexOrTextID], a
 	call DisplayTextID
 	SetEvent EVENT_GOT_POKEDEX
-	ld a, $1
-	ld [wViridianCityCurScript], a
+	;ld a, $1
+	;ld [wViridianCityCurScript], a
 	SetEvent EVENT_OAK_GOT_PARCEL
 	ld a, HS_LYING_OLD_MAN
 	ld [wMissableObjectIndex], a
@@ -814,7 +814,7 @@ OaksLabText3:
 	ld b, wPokedexOwnedEnd - wPokedexOwned
 	call CountSetBits
 	ld a, [wNumSetBits]
-	cp 2
+	cp 9
 	jr c, .asm_1c9ec
 .asm_1c9d9
 	ld hl, OaksLabText_1ca9f
@@ -828,12 +828,12 @@ OaksLabText3:
 	ld b, POKE_BALL
 	call IsItemInBag
 	jr nz, .asm_1ca69
-	ld hl, wPokedexOwned
-	ld b, wPokedexOwnedEnd - wPokedexOwned
-	call CountSetBits
-	ld a, [wNumSetBits]
-	cp 2
-	jr nc, .asm_1ca69
+	;ld hl, wPokedexOwned
+	;ld b, wPokedexOwnedEnd - wPokedexOwned
+	;call CountSetBits
+	;ld a, [wNumSetBits]
+	;cp 9
+	;jr nc, .asm_1ca69
 	CheckEvent EVENT_BEAT_ROUTE22_RIVAL_1ST_BATTLE
 	jr nz, .asm_1ca52
 	CheckEvent EVENT_GOT_POKEDEX

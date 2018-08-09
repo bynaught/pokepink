@@ -58,8 +58,9 @@ _ViridianCityText_1917a::
 	done
 
 _ViridianCityText_19191::
-	text "You can't go"
-	line "through here!"
+	text "OLD MAN: Hey!"
+
+	para "Get off my lawn!"
 
 	para "This is private"
 	line "property!"

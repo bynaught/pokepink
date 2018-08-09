@@ -1,9 +1,9 @@
 PalletTownScript:
-    ; CheckEvent EVENT_OAK_APPEARED_IN_PALLET
-    ; jr nz, .next
-    ; ld a, HS_SECRET_SIGN
-	; ld [wMissableObjectIndex], a    ; hide the sign. IT'S YOUR FRIEND NOW
-	; predef ShowObject
+    ;CheckEvent EVENT_OAK_APPEARED_IN_PALLET
+    ;jr nz, .next
+    ;ld a, HS_SECRET_SIGN
+	;ld [wMissableObjectIndex], a    ; hide the sign. IT'S YOUR FRIEND NOW
+	;predef ShowObject
 	CheckEvent EVENT_GOT_POKEBALLS_FROM_OAK
 	jr z, .next
 	SetEvent EVENT_PALLET_AFTER_GETTING_POKEBALLS
@@ -234,6 +234,8 @@ PalletTownTextPointers:
 	dw PalletTownText5
 	dw PalletTownText6
 	dw PalletTownText7
+	dw PalletTownText8
+	dw PalletTownText9
 
 PalletTownText1: ; oak warns (text), then appears, walks up, and then speaks to you
 	TX_ASM

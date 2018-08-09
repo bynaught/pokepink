@@ -16,7 +16,7 @@ db TRANSFORM
 db 0
 db 0
 db 0
-db 4 ; growth rate, changed from 0 to 4, which is "fast"
+db 3 ; growth rate, changed from 0 to 3, same as other starters
 ; learnset
 	tmlearn 0
 	tmlearn 0

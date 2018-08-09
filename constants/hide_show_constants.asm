@@ -52,8 +52,6 @@ const_value = 0
 	const HS_TOWN_MAP                     ; 29
 	const HS_OAKS_LAB_RIVAL               ; 2A
 	const HS_STARTER_BALL_1               ; 2B
-	;const HS_STARTER_BALL_2               ; 2C
-	;const HS_STARTER_BALL_3               ; 2D
 	const HS_OAKS_LAB_OAK_1               ; 2E
 	const HS_POKEDEX_1                    ; 2F
 	const HS_POKEDEX_2                    ; 30
