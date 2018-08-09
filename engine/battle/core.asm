@@ -4333,15 +4333,15 @@ GetDamageVarsForPlayerAttack:
 	ld c, [hl] ; bc = enemy defense
 	ld a, [wEnemyBattleStatus3]
 	bit HAS_REFLECT_UP, a ; check for Reflect
-	;jr z, .physicalAttackCritCheck
+	jr z, .physicalAttackCritCheck
 ; if the enemy has used Reflect, double the enemy's defense
 	sla c
 	rl b
 	call CapBCAt1023
 .physicalAttackCritCheck
 	ld hl, wBattleMonAttack
-	ld a, [wCriticalHitOrOHKO]
-	and a ; check for critical hit
+	;ld a, [wCriticalHitOrOHKO]
+	;and a ; check for critical hit
 	jr z, .scaleStats
 ; in the case of a critical hit, reset the player's attack and the enemy's defense to their base values
 	ld c, 3 ; defense stat
@@ -4364,7 +4364,7 @@ GetDamageVarsForPlayerAttack:
 	ld c, [hl] ; bc = enemy special
 	ld a, [wEnemyBattleStatus3]
 	bit HAS_LIGHT_SCREEN_UP, a ; check for Light Screen
-	;jr z, .specialAttackCritCheck
+	jr z, .specialAttackCritCheck
 ; if the enemy has used Light Screen, double the enemy's special
 	sla c
 	rl b
@@ -4373,8 +4373,8 @@ GetDamageVarsForPlayerAttack:
 ; a Pokemon with 512 or more Defense has used Reflect, or if a Pokemon with 512 or more Special has used Light Screen
 .specialAttackCritCheck
 	ld hl, wBattleMonSpecial
-	ld a, [wCriticalHitOrOHKO]
-	and a ; check for critical hit
+	;ld a, [wCriticalHitOrOHKO]
+	;and a ; check for critical hit
 	jr z, .scaleStats
 ; in the case of a critical hit, reset the player's and enemy's specials to their base values
 	ld c, 5 ; special stat
@@ -4456,15 +4456,15 @@ GetDamageVarsForEnemyAttack:
 	ld c, [hl] ; bc = player defense
 	ld a, [wPlayerBattleStatus3]
 	bit HAS_REFLECT_UP, a ; check for Reflect
-	;jr z, .physicalAttackCritCheck
+	jr z, .physicalAttackCritCheck
 ; if the player has used Reflect, double the player's defense
 	sla c
 	rl b
 	call CapBCAt1023
 .physicalAttackCritCheck
 	ld hl, wEnemyMonAttack
-	ld a, [wCriticalHitOrOHKO]
-	and a ; check for critical hit
+	;ld a, [wCriticalHitOrOHKO]
+	;and a ; check for critical hit
 	jr z, .scaleStats
 ; in the case of a critical hit, reset the player's defense and the enemy's attack to their base values
 	ld hl, wPartyMon1Defense
@@ -4487,7 +4487,7 @@ GetDamageVarsForEnemyAttack:
 	ld c, [hl]
 	ld a, [wPlayerBattleStatus3]
 	bit HAS_LIGHT_SCREEN_UP, a ; check for Light Screen
-	;jr z, .specialAttackCritCheck
+	jr z, .specialAttackCritCheck
 ; if the player has used Light Screen, double the player's special
 	sla c
 	rl b
@@ -4496,8 +4496,8 @@ GetDamageVarsForEnemyAttack:
 ; a Pokemon with 512 or more Defense has used Reflect, or if a Pokemon with 512 or more Special has used Light Screen
 .specialAttackCritCheck
 	ld hl, wEnemyMonSpecial
-	ld a, [wCriticalHitOrOHKO]
-	and a ; check for critical hit
+;	ld a, [wCriticalHitOrOHKO]
+;	and a ; check for critical hit
 	jr z, .scaleStats
 ; in the case of a critical hit, reset the player's and enemy's specials to their base values
 	ld hl, wPartyMon1Special

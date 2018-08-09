@@ -26,7 +26,7 @@ MoveEnd:
 	move RAZOR_WIND,   CHARGE_EFFECT,               80, NORMAL,    75, 10
 	move SWORDS_DANCE, ATTACK_UP2_EFFECT,            0, NORMAL,   100, 30
 	move CUT,          NO_ADDITIONAL_EFFECT,        50, NORMAL,    95, 30
-	move GUST,         NO_ADDITIONAL_EFFECT,        40, NORMAL,   100, 35
+	move GUST,         NO_ADDITIONAL_EFFECT,        40, FLYING,   100, 35
 	move WING_ATTACK,  NO_ADDITIONAL_EFFECT,        35, FLYING,   100, 35
 	move WHIRLWIND,    SWITCH_AND_TELEPORT_EFFECT,   0, NORMAL,    85, 20
 	move FLY,          FLY_EFFECT,                  70, FLYING,    95, 15
@@ -126,7 +126,7 @@ MoveEnd:
 	move LIGHT_SCREEN, LIGHT_SCREEN_EFFECT,          0, PSYCHIC,  100, 30
 	move HAZE,         HAZE_EFFECT,                  0, ICE,      100, 30
 	move REFLECT,      REFLECT_EFFECT,               0, PSYCHIC,  100, 20
-	move FOCUS_ENERGY, FOCUS_ENERGY_EFFECT,          0, NORMAL,   100, 30
+	move FOCUS_ENERGY, ATTACK_UP1_EFFECT,            0, NORMAL,   100, 30 ; changed to attack up
 	move BIDE,         BIDE_EFFECT,                  0, NORMAL,   100, 10
 	move METRONOME,    METRONOME_EFFECT,             0, NORMAL,   100, 10
 	move MIRROR_MOVE,  MIRROR_MOVE_EFFECT,           0, FLYING,   100, 20

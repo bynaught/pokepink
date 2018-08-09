@@ -46,8 +46,8 @@ ViridianCityScript_1903d:
 	cp $9
 	ret nz
 	ld a, [wXCoord]
-	cp $13
-	ret nz
+	cp $11
+	ret c
 	ld a, $5
 	ld [hSpriteIndexOrTextID], a
 	call DisplayTextID

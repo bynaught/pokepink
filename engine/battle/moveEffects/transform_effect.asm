@@ -368,6 +368,8 @@ TransformEffect_:
 	;ld hl, wEnemyMonStatMods
 	;ld de, wPlayerMonStatMods
 	;call .copyBasedOnTurn ; stat mods - no longer copies these
+	xor a
+	ld [H_WHOSETURN], a
 	ld hl, TransformedText
 	jp PrintText
 

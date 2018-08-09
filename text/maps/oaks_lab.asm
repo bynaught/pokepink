@@ -53,11 +53,11 @@ _OaksLabText_1d2fa::
 _OaksLabDeliverParcelText1::
 	text "OAK: Oh, <PLAYER>!"
 
-	para "How is my old"
-	line "#MON?"
+	para "How is your friend"
+	line "DITTO?"
 
-	para "Well, it seems to"
-	line "like you a lot."
+	para "Well, it seems"
+	line "very happy."
 
 	para "You must be"
 	line "talented as a"
