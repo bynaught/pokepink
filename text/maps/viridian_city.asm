@@ -43,10 +43,20 @@ _ViridianCityText_19157::
 	done
 
 _ViridianCityText_19175::
-	text "Oh Grandpa! Don't"
-	line "be so mean!"
-	cont "He hasn't had his"
-	cont "coffee yet."
+	text "Oh I'm sorry! My"
+	line "Grandpa is very"
+	cont "protective of this"
+	cont "parkland."
+
+	para "He'll be in a"
+	line "better mood when"
+	cont "he's had a cup"
+	cont "of coffee."
+
+	para "Why not explore"
+	line "the city in the"
+	cont "meantime?"
+
 	done
 
 _ViridianCityText_1917a::
@@ -60,7 +70,7 @@ _ViridianCityText_1917a::
 _ViridianCityText_19191::
 	text "OLD MAN: Hey!"
 
-	para "Get off my lawn!"
+	para "Get off my land!"
 
 	para "This is private"
 	line "property!"
