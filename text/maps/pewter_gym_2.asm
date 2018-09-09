@@ -110,12 +110,22 @@ _PewterGymText_5c515::
 
 	para "Let me take you"
 	line "to the top!"
+
+	para "If you have the"
+	line "chance, set up"
+	cont "your victory with"
+	cont "moves that raise"
+	cont "your stats."
+
+	para "Every battle is a"
+	line "puzzle that can be"
+	cont "solved!"
 	done
 
 _PewterGymText_5c51a::
 	text "All right! Let's"
 	line "get happening!"
-	prompt
+	done
 
 _PewterGymText_5c51f::
 	text "The 1st #MON"

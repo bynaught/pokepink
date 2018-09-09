@@ -188,6 +188,7 @@ SECTION "Battle (bank 4)", ROMX, BANK[$4]
 
 INCLUDE "engine/overworld/is_player_just_outside_map.asm"
 INCLUDE "engine/menu/status_screen.asm"
+INCLUDE "engine/battle/display_trainer_party.asm"
 INCLUDE "engine/menu/party_menu.asm"
 
 RedPicFront:: INCBIN "pic/trainer/red.pic"
@@ -910,6 +911,7 @@ INCLUDE "engine/evos_moves.asm"
 INCLUDE "engine/battle/moveEffects/heal_effect.asm"
 INCLUDE "engine/battle/moveEffects/transform_effect.asm"
 INCLUDE "engine/battle/moveEffects/reflect_light_screen_effect.asm"
+INCLUDE "engine/battle/moveEffects/protect_effect.asm"
 
 
 SECTION "bankF",ROMX,BANK[$F]

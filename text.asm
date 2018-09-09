@@ -2318,6 +2318,11 @@ _DreamWasEatenText::
 	line "dream was eaten!"
 	prompt
 
+_ProtectText::
+	text "It protected"
+	line "itself!"
+	prompt
+
 _TradeCenterText1::
 	text "!"
 	done

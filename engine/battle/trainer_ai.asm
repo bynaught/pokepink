@@ -235,6 +235,8 @@ AIMoveChoiceModification3:
 	jr z, .betterMoveFound ; Super Fang is considered to be a better move
 	cp SPECIAL_DAMAGE_EFFECT
 	jr z, .betterMoveFound ; any special damage moves are considered to be better moves
+	cp TWO_TO_FIVE_ATTACKS_EFFECT 
+	jr z, .betterMoveFound ; ; prefer multihit
 	cp FLY_EFFECT
 	jr z, .betterMoveFound ; Fly is considered to be a better move
 	ld a, [wEnemyMoveType]
@@ -280,7 +282,7 @@ TrainerClassMoveChoiceModifications:
 	db 1,0    ; BUG CATCHER
 	db 1,0    ; LASS
 	db 1,3,0  ; SAILOR
-	db 1,0    ; JR_TRAINER_M
+	db 1,2,0    ; JR_TRAINER_M
 	db 1,0    ; JR_TRAINER_F
 	db 1,2,3,0; POKEMANIAC
 	db 1,2,0  ; SUPER_NERD

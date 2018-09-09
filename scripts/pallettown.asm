@@ -118,6 +118,8 @@ PalletTownScript1:
 
 PalletTownScript2:        ; this should be usable as is? 
 	SetEvent EVENT_OAK_APPEARED_IN_PALLET
+	ld a, $FF
+	ld [wJoyIgnore], a
 	ld a, 1
 	ld [H_SPRITEINDEX], a
 	ld a, SPRITE_FACING_UP
@@ -139,14 +141,15 @@ PalletTownScript2:        ; this should be usable as is?
 	ld a, 1 ; oak
 	ld [H_SPRITEINDEX], a
 	call MoveSprite
-	ld a, $FC
-	ld [wJoyIgnore], a
+	
 
 	; trigger the next script
 	ld a, 3
 	ld [wPalletTownCurScript], a
 	ld a, 0
 	ld [wcf0d], a   ; this address is used to decide which oak text to use
+	ld a, $FC
+	ld [wJoyIgnore], a
 	ld a, 1
 	ld [hSpriteIndexOrTextID], a ; oak speaks to you before leading you to lab text
 	call DisplayTextID
@@ -178,7 +181,7 @@ PalletTownScript3:
 	ld a, HS_SECRET_DITTO
 	ld [wMissableObjectIndex], a
 	predef HideObject
-	ld a, 60
+	ld a, 30
 	call DelayFrames
 ; set up movement script that causes the player to follow Oak to his lab
 	ld a, $FF
@@ -314,7 +317,6 @@ PalletTownText4: ; secret sign
 	;call DelayFrames
 	ld hl, PalletTownText5
 	call PrintText
-
 	ld a, HS_PALLET_TOWN_OAK
 	ld [wMissableObjectIndex], a
 	predef ShowObject

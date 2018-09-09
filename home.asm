@@ -1548,6 +1548,11 @@ DisplayListMenuIDLoop::
 	ld a, [hl]
 	add 3
 	ld b, a
+	ld a, [wListMenuID]
+	cp MOVESLISTMENU
+	jr nz, .scrollCheck
+	inc b
+.scrollCheck
 	ld a, [wListCount]
 	cp b ; will going down scroll past the Cancel button?
 	jp c, DisplayListMenuIDLoop
@@ -1887,6 +1892,9 @@ PrintListMenuEntries::
 	ld [hl], a
 	ret
 .printCancelMenuItem
+	ld a, [wListMenuID]
+	cp MOVESLISTMENU
+	ret z
 	ld de, ListMenuCancelText
 	jp PlaceString
 

@@ -1134,6 +1134,7 @@ KabutoEvosMoves:
 	db EV_LEVEL, 40, KABUTOPS
 	db 0
 ; Learnset
+	db 10, FURY_SWIPES
 	db 34, ABSORB
 	db 39, SLASH
 	db 44, LEER
@@ -1382,6 +1383,7 @@ WeedleEvosMoves:
 	db EV_LEVEL, 7, KAKUNA
 	db 0
 ; Learnset
+	db 6, TACKLE
 	db 0
 
 KakunaEvosMoves:
@@ -1483,6 +1485,7 @@ CaterpieEvosMoves:
 	db EV_LEVEL, 7, METAPOD
 	db 0
 ; Learnset
+	db 6, LICK
 	db 0
 
 MetapodEvosMoves:
@@ -1496,10 +1499,10 @@ ButterfreeEvosMoves:
 ; Evolutions
 	db 0
 ; Learnset
-	db 12, POISONPOWDER
-	db 15, STUN_SPORE
-	db 16, CONFUSION
-	db 17, SLEEP_POWDER
+	db 10, POISONPOWDER
+	db 12, STUN_SPORE
+	db 14, CONFUSION
+	db 18, SLEEP_POWDER
 	db 21, SUPERSONIC
 	db 26, WHIRLWIND
 	db 32, PSYBEAM
@@ -1936,8 +1939,8 @@ GeodudeEvosMoves:
 	db EV_LEVEL, 25, GRAVELER
 	db 0
 ; Learnset
-	db 7, DEFENSE_CURL
-	db 11, SHARPEN
+	db 7, COMET_PUNCH
+	db 11, RAGE
 	db 16, ROCK_THROW
 	db 21, SELFDESTRUCT
 	db 26, HARDEN
@@ -2089,6 +2092,7 @@ OddishEvosMoves:
 	db EV_LEVEL, 21, GLOOM
 	db 0
 ; Learnset
+	db 10, TACKLE
 	db 15, POISONPOWDER
 	db 17, STUN_SPORE
 	db 19, SLEEP_POWDER

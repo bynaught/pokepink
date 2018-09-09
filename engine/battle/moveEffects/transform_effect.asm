@@ -180,7 +180,12 @@ TransformEffect_:
     ld hl, wBattleMonHP
     ld [hli], a
     ld a, [H_QUOTIENT + 3]
-    ld [hl], a
+    ld [hld], a
+	and a
+	jr nz, .maxHP
+	ld a, [hli]
+	jr nz, .maxHP
+	inc [hl]   ; if i've done this right, check if HP would be 0, then add 1 if it is so that we don't faint
 
 ; max HP
 .maxHP
@@ -216,14 +221,14 @@ TransformEffect_:
 	ld a, [hl] ; check if the pokemon learns any moves at all (for cases like Weedle)
 	and a
 	jp z, .addLevelZeroMoves ; if it doesn't, we already have all the moves. jump. this was COPYPP
-	ld a, [wBattleMonLevel]
+	ld a, [wBattleMonLevel] ; change to enemymonlevel for extra difficulty
 	cp [hl]
 	jp c, .addLevelZeroMoves ; if our level isn't high enough, do the same. this was also COPYPP
 .countLearnset ; use this to loop over the learnset, incrementing something to write to wTransformMoveList, then write move IDs to subsequent bytes
 	ld a, [hl]
 	and a ; 0 marks end of learnset, so check that
 	jp z, .addLevelZeroMoves ; if it's zero, skip because we're at the end
-	ld a, [wBattleMonLevel]
+	ld a, [wBattleMonLevel] ; change to enemymonlevel for extra difficulty
 	cp [hl]
 	jp c, .addLevelZeroMoves ; compare my level with learnset level, if ls lvl is higher, stop iterating
 	inc hl ; incrememnt hl to point to the move ID
@@ -282,7 +287,7 @@ TransformEffect_:
 	;dec c
 	ld a, c
 	ld [wTransformMoveList], a
-	ld a, $96 ; put Splash at the bottom. this stops it from glitching and i have no idea why. in the future, change the way the menu draws to chop off the bottom
+	ld a, $ff ; put ff at the bottom. is this the terminator i was looking for? this stops it from glitching and i have no idea why. in the future, change the way the menu draws to chop off the bottom
 	ld [de], a
 	inc de 
 	ld [de], a
@@ -437,6 +442,7 @@ ShowMoveMenu:
 	jp c, .drawMoveMenu ; if the player tried to exit the menu, redraw it
 	ld a, [wcf91] ; store selected value (move id) in A
 	ret
+
 
 MovePPCopy:
 	ld a, [hli]     ; read move ID

@@ -390,9 +390,10 @@ MainInBattleLoop:
 ; the player is not using Rage and doesn't need to recharge
 	ld hl, wEnemyBattleStatus1
 	res FLINCHED, [hl] ; reset flinch bit
+	res INVULNERABLE, [hl] ; reset invulnerability
 	ld hl, wPlayerBattleStatus1
 	res FLINCHED, [hl] ; reset flinch bit
-	res INVULNERABLE, [hl] ; can i just add this here????
+	res INVULNERABLE, [hl] ; reset invulnerability
 	ld a, [hl]
 	and (1 << THRASHING_ABOUT) | (1 << CHARGING_UP) ; check if the player is thrashing about or charging for an attack
 	jr nz, .selectEnemyMove ; if so, jump
@@ -465,6 +466,14 @@ MainInBattleLoop:
 	ld a, [wPlayerSelectedMove]
 	cp TRANSFORM ; transform has ultimate priority, this combined with invuln bit is a hacky way of implementing imposter
 	jp z, .playerMovesFirst
+	;protect priority. no need to check speed here- if both use protect then order doesn't matter
+	cp PROTECT
+	jp z, .playerMovesFirst
+	ld a, [wEnemySelectedMove]
+	cp PROTECT
+	jp z, .enemyMovesFirst 
+	;quick attack priority
+	ld a, [wPlayerSelectedMove]
 	cp QUICK_ATTACK
 	jr nz, .playerDidNotUseQuickAttack
 	ld a, [wEnemySelectedMove]
@@ -491,13 +500,15 @@ MainInBattleLoop:
 	ld hl, wEnemyMonSpeed ; enemy speed value
 	ld c, $2
 	call StringCmp ; compare speed values
-	jr z, .speedEqual
+	jr z, .playerMovesFirst ; used to be .speedEqual 
+	; TESTING CHANGE: player goes first if speed is equal.
+	; alternative: higher level goes first  
 	jr nc, .playerMovesFirst ; if player is faster
 	jr .enemyMovesFirst ; if enemy is faster
-.speedEqual ; 50/50 chance for both players
-	ld a, [hSerialConnectionStatus]
+.speedEqual ; 50/50 chance for both players ;
+	ld a, [hSerialConnectionStatus] ; this is for link battles i think
 	cp USING_INTERNAL_CLOCK
-	jr z, .invertOutcome
+	jr z, .invertOutcome ; invert if using external clock (other gameboy) because it's testing if ENEMY goes first
 	call BattleRandom
 	cp $80
 	jr c, .playerMovesFirst
@@ -1037,6 +1048,13 @@ TrainerBattleVictory:
 	ld c, 40
 	call DelayFrames
 	call PrintEndBattleText
+	xor a
+	ld [wEnemyMon1], a
+	ld [wEnemyMon2], a
+	ld [wEnemyMon3], a
+	ld [wEnemyMon4], a
+	ld [wEnemyMon5], a
+	ld [wEnemyMon6], a
 ; win money
 	ld hl, MoneyForWinningText
 	call PrintText
@@ -3414,6 +3432,26 @@ MultiHitText:
 	db "@"
 
 ExecutePlayerMoveDone:
+	ld de, wPlayerMoveHistory + 4
+	ld hl, wPlayerMoveHistory + 5
+	ld a, [de]
+	ld [hld], a
+	dec de
+
+	ld a, [de]
+	ld [hld], a
+	dec de
+
+	ld a, [de]
+	ld [hld], a
+	dec de
+
+	ld a, [de]
+	ld [hld], a
+	dec de
+	
+	ld a, [wPlayerSelectedMove]
+	ld [de], a
 	xor a
 	ld [wActionResultOrTookBattleTurn], a
 	ld b, 1
@@ -5200,8 +5238,22 @@ AttackSubstitute:
 	jr z, .nullifyEffect
 	ld hl, wEnemyMoveEffect ; value for enemy's turn
 .nullifyEffect
+	ld a, [wPlayerMoveEffect]
+	cp TWO_TO_FIVE_ATTACKS_EFFECT
+	jr z, .continueTurn
+	ld a, [wPlayerMoveEffect]
+	cp ATTACK_TWICE_EFFECT
+	jr z, .continueTurn              
+	ld a, [wEnemyMoveEffect]
+	cp TWO_TO_FIVE_ATTACKS_EFFECT
+	jr z, .continueTurn
+	ld a, [wEnemyMoveEffect]
+	cp ATTACK_TWICE_EFFECT
+	jr z, .continueTurn              ; all of this should hopefully make multihit moves continue after breaking a substitute?
 	xor a
 	ld [hl], a ; zero the effect of the attacker's move
+.continueTurn
+	xor a
 	jp DrawHUDsAndHPBars
 
 SubstituteTookDamageText:
@@ -5332,7 +5384,7 @@ MetronomePickMove:
 	call BattleRandom
 	and a
 	jr z, .pickMoveLoop
-	cp NUM_ATTACKS + 1 ; max normal move number + 1 (this is Struggle's move number)
+	cp $a5 ; max normal move number + 1 (this is Struggle's move number) ; was NUM_ATTACKS + 1
 	jr nc, .pickMoveLoop
 	cp METRONOME
 	jr z, .pickMoveLoop
@@ -5738,10 +5790,11 @@ RandomizeDamage:
 	ld [H_MULTIPLICAND + 2], a
 ; loop until a random number greater than or equal to 217 is generated
 .loop
-	call BattleRandom
-	rrca
-	cp 217
-	jr c, .loop
+	; call BattleRandom
+	; rrca
+	; cp 217
+	; jr c, .loop
+	ld a, $ff
 	ld [H_MULTIPLIER], a
 	call Multiply ; multiply damage by the random number, which is in the range [217, 255]
 	ld a, 255
@@ -5971,6 +6024,28 @@ HitXTimesText:
 	db "@"
 
 ExecuteEnemyMoveDone:
+	ld de, wEnemyMoveHistory + 4
+	ld hl, wEnemyMoveHistory + 5
+	ld a, [de]
+	ld [hld], a
+	dec de
+
+	ld a, [de]
+	ld [hld], a
+	dec de
+
+	ld a, [de]
+	ld [hld], a
+	dec de
+
+	ld a, [de]
+	ld [hld], a
+	dec de
+
+	ld a, [wEnemySelectedMove]
+	ld [de], a
+
+	xor a
 	ld b, $1
 	ret
 
@@ -6343,6 +6418,7 @@ LoadEnemyMonData:
 	jr .copyTypes
 ; if it's a trainer mon, copy the HP and status from the enemy party data
 .copyHPAndStatusFromPartyData
+
 	ld hl, wEnemyMon1HP
 	ld a, [wWhichPokemon]
 	ld bc, wEnemyMon2 - wEnemyMon1
@@ -6971,9 +7047,10 @@ InitBattleCommon:
 	ld a, [wEnemyMonSpecies2]
 	sub 200
 	jp c, InitWildBattle
+.battleTransition
 	ld [wTrainerClass], a
 	call GetTrainerInformation
-	callab ReadTrainer
+	callab ReadTrainer 
 	call DoBattleTransitionAndInitBattleVariables
 	call _LoadTrainerPic
 	xor a
@@ -7066,6 +7143,22 @@ _InitBattleCommon:
 	call ClearSprites
 	ld a, [wIsInBattle]
 	dec a ; is it a wild battle?
+	jr z, .skipTrainerParty
+	push af
+	push bc
+	push de
+	push hl
+	callab DisplayTrainerParty ; !!!make sure to define this below and point to _DisplayTrainerParty
+	call WaitForTextScrollButtonPress
+	call LoadScreenTilesFromBuffer1
+	pop hl
+	pop de
+	pop bc
+	pop af
+	;call ClearScreen
+.skipTrainerParty
+	ld a, [wIsInBattle]
+	dec a ; is it a wild battle?
 	call z, DrawEnemyHUDAndHPBar ; draw enemy HUD and HP bar if it's a wild battle
 	call StartBattle
 	callab EndOfBattle
@@ -7081,6 +7174,7 @@ _InitBattleCommon:
 	db "@"
 
 _LoadTrainerPic:
+
 ; wd033-wd034 contain pointer to pic
 	ld a, [wTrainerPicPointer]
 	ld e, a
@@ -7330,6 +7424,7 @@ MoveEffectPointerTable:
 	 dw LeechSeedEffect           ; LEECH_SEED_EFFECT
 	 dw SplashEffect              ; SPLASH_EFFECT
 	 dw DisableEffect             ; DISABLE_EFFECT
+	 dw ProtectEffect
 
 SleepEffect:
 	ld de, wEnemyMonStatus
@@ -7490,13 +7585,14 @@ ExplodeEffect:
 	ld de, wEnemyBattleStatus2
 .faintUser
 	xor a
-	ld [hli], a ; set the mon's HP to 0
+	ld [hli], a ; set the mon's HP to 1
+	ld a, 1
 	ld [hli], a
 	inc hl
-	ld [hl], a ; set mon's status to 0
-	ld a, [de]
-	res SEEDED, a ; clear mon's leech seed status
-	ld [de], a
+	;ld [hl], a ; set mon's status to 0
+	;ld a, [de]
+	;res SEEDED, a ; clear mon's leech seed status
+	;ld [de], a
 	ret
 
 FreezeBurnParalyzeEffect:
@@ -8067,21 +8163,37 @@ StatsTextStrings:
 	db "ACCURACY@"
 	db "EVADE@"
 
+; StatModifierRatios:
+; ; first byte is numerator, second byte is denominator
+; 	db 25, 100  ; 0.25
+; 	db 28, 100  ; 0.28
+; 	db 33, 100  ; 0.33
+; 	db 40, 100  ; 0.40
+; 	db 50, 100  ; 0.50
+; 	db 66, 100  ; 0.66
+; 	db  1,   1  ; 1.00
+; 	db 15,  10  ; 1.50
+; 	db  2,   1  ; 2.00
+; 	db 25,  10  ; 2.50
+; 	db  3,   1  ; 3.00
+; 	db 35,  10  ; 3.50
+; 	db  4,   1  ; 4.00
+
 StatModifierRatios:
-; first byte is numerator, second byte is denominator
-	db 25, 100  ; 0.25
-	db 28, 100  ; 0.28
+; first byte is numerator, second byte is denominator ; original table above
+	db 20, 100  ; 0.20
+	db 23, 100  ; 0.23
+	db 27, 100  ; 0.27
 	db 33, 100  ; 0.33
-	db 40, 100  ; 0.40
-	db 50, 100  ; 0.50
-	db 66, 100  ; 0.66
+	db 42, 100  ; 0.42
+	db 60, 100  ; 0.60
 	db  1,   1  ; 1.00
-	db 15,  10  ; 1.50
-	db  2,   1  ; 2.00
-	db 25,  10  ; 2.50
-	db  3,   1  ; 3.00
-	db 35,  10  ; 3.50
-	db  4,   1  ; 4.00
+	db 25,  15  ; 1.66
+	db 35,  15  ; 2.33
+	db 45,  15  ; 3.00
+	db 55,  15  ; 3.66
+	db 65,  15  ; 4.33
+	db 75,  15  ; 5.00
 
 BideEffect:
 	ld hl, wPlayerBattleStatus1
@@ -8710,6 +8822,9 @@ TransformEffect:
 ReflectLightScreenEffect:
 	jpab ReflectLightScreenEffect_
 
+ProtectEffect:
+	jpab ProtectEffect_
+
 NothingHappenedText:
 	TX_FAR _NothingHappenedText
 	db "@"
@@ -8875,3 +8990,4 @@ PhysicalSpecialSplit:
 ; 	pop de
 ; 	pop hl
 ; 	ret
+

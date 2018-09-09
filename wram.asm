@@ -2910,7 +2910,13 @@ wDittoTMS::
 wPCHPStore::
 	ds 1
 
-	ds 32 
+wPlayerMoveHistory::
+	ds 5
+
+wEnemyMoveHistory::
+	ds 5
+
+	ds 22 
 
 wObtainedHiddenItemsFlags:: 
 	ds 14

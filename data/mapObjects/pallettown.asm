@@ -14,7 +14,7 @@ PalletTownObject:
 
 	db 5 ; objects
 	object SPRITE_OAK, 9, 6, STAY, NONE, 1 ; person
-	object SPRITE_GIRL, 3, 8, WALK, 0, 2 ; person
+	object SPRITE_GIRL, 3, 8, WALK, 1, 2 ; person
 	object SPRITE_FISHER2, 11, 14, WALK, 0, 3 ; person
 	object SPRITE_SIGN, 10, 1, STAY, DOWN, 4 ; sign
 	object SPRITE_DITTO, 10, 1, STAY, DOWN, 5 ; ditto

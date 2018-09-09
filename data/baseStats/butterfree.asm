@@ -15,7 +15,7 @@ dw ButterfreePicBack
 db TACKLE
 db STRING_SHOT
 db HARDEN
-db POISONPOWDER
+db 0
 db 0 ; growth rate
 ; learnset
 	tmlearn 2,4,6

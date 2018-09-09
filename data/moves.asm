@@ -25,7 +25,7 @@ MoveEnd:
 	move GUILLOTINE,   OHKO_EFFECT,                  1, NORMAL,    30,  5
 	move RAZOR_WIND,   CHARGE_EFFECT,               80, NORMAL,    75, 10
 	move SWORDS_DANCE, ATTACK_UP2_EFFECT,            0, NORMAL,   100, 30
-	move CUT,          NO_ADDITIONAL_EFFECT,        50, NORMAL,    95, 30
+	move CUT,          NO_ADDITIONAL_EFFECT,        50, NORMAL,   100, 30
 	move GUST,         NO_ADDITIONAL_EFFECT,        40, FLYING,   100, 35
 	move WING_ATTACK,  NO_ADDITIONAL_EFFECT,        35, FLYING,   100, 35
 	move WHIRLWIND,    SWITCH_AND_TELEPORT_EFFECT,   0, NORMAL,    85, 20
@@ -43,7 +43,7 @@ MoveEnd:
 	move HORN_ATTACK,  NO_ADDITIONAL_EFFECT,        65, NORMAL,   100, 25
 	move FURY_ATTACK,  TWO_TO_FIVE_ATTACKS_EFFECT,  15, NORMAL,    85, 20
 	move HORN_DRILL,   OHKO_EFFECT,                  1, NORMAL,    30,  5
-	move TACKLE,       NO_ADDITIONAL_EFFECT,        35, NORMAL,    95, 35
+	move TACKLE,       NO_ADDITIONAL_EFFECT,        35, NORMAL,   100, 35
 	move BODY_SLAM,    PARALYZE_SIDE_EFFECT2,       85, NORMAL,   100, 15
 	move WRAP,         TRAPPING_EFFECT,             15, NORMAL,    85, 20
 	move TAKE_DOWN,    RECOIL_EFFECT,               90, NORMAL,    85, 20
@@ -109,7 +109,7 @@ MoveEnd:
 	move MEDITATE,     ATTACK_UP1_EFFECT,            0, PSYCHIC,  100, 40
 	move AGILITY,      SPEED_UP2_EFFECT,             0, PSYCHIC,  100, 30
 	move QUICK_ATTACK, NO_ADDITIONAL_EFFECT,        40, NORMAL,   100, 30
-	move RAGE,         RAGE_EFFECT,                 20, NORMAL,   100, 20
+	move RAGE,         RAGE_EFFECT,                 40, NORMAL,   100, 20
 	move TELEPORT,     SWITCH_AND_TELEPORT_EFFECT,   0, PSYCHIC,  100, 20
 	move NIGHT_SHADE,  SPECIAL_DAMAGE_EFFECT,        0, GHOST,    100, 15
 	move MIMIC,        MIMIC_EFFECT,                 0, NORMAL,   100, 10
@@ -164,7 +164,7 @@ MoveEnd:
 	move ACID_ARMOR,   DEFENSE_UP2_EFFECT,           0, POISON,   100, 40
 	move CRABHAMMER,   NO_ADDITIONAL_EFFECT,        90, WATER,     85, 10
 	move EXPLOSION,    EXPLODE_EFFECT,             170, NORMAL,   100,  5
-	move FURY_SWIPES,  TWO_TO_FIVE_ATTACKS_EFFECT,  18, NORMAL,    80, 15
+	move FURY_SWIPES,  TWO_TO_FIVE_ATTACKS_EFFECT,  15, NORMAL,   100, 15
 	move BONEMERANG,   ATTACK_TWICE_EFFECT,         50, GROUND,    90, 10
 	move REST,         HEAL_EFFECT,                  0, PSYCHIC,  100, 10
 	move ROCK_SLIDE,   NO_ADDITIONAL_EFFECT,        75, ROCK,      90, 10
@@ -176,3 +176,4 @@ MoveEnd:
 	move SLASH,        NO_ADDITIONAL_EFFECT,        70, NORMAL,   100, 20
 	move SUBSTITUTE,   SUBSTITUTE_EFFECT,            0, NORMAL,   100, 10
 	move STRUGGLE,     RECOIL_EFFECT,               50, NORMAL,   100, 10
+	move HARDEN,       PROTECT_EFFECT,               0, NORMAL,   100, 10 ; PROTECT

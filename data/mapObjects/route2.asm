@@ -13,9 +13,9 @@ Route2Object:
 	sign 5, 65, 3 ; Route2Text3
 	sign 11, 11, 4 ; Route2Text4
 
-	db 2 ; objects
-	object SPRITE_BALL, 13, 54, STAY, NONE, 1, MOON_STONE
-	object SPRITE_BALL, 13, 45, STAY, NONE, 2, HP_UP
+	db 0 ; objects
+	;object SPRITE_BALL, 13, 54, STAY, NONE, 1, MOON_STONE
+	;object SPRITE_BALL, 13, 45, STAY, NONE, 2, HP_UP
 
 	; warp-to
 	warp_to 12, 9, ROUTE_2_WIDTH ; DIGLETTS_CAVE_EXIT
